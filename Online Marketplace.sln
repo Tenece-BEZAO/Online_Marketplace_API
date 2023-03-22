@@ -3,13 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online_Marketplace.API", "Online Marketplace\Online_Marketplace.API\Online_Marketplace.API.csproj", "{9D642076-F9C3-43D3-93D9-07461BE7DE28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.API", "Online Marketplace\Online_Marketplace.API\Online_Marketplace.API.csproj", "{9D642076-F9C3-43D3-93D9-07461BE7DE28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online_Marketplace.DAL", "Online Marketplace\Online_Marketplace.DAL\Online_Marketplace.DAL.csproj", "{0B9B5371-7256-49E4-92E7-D08A3EF2447C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.DAL", "Online Marketplace\Online_Marketplace.DAL\Online_Marketplace.DAL.csproj", "{0B9B5371-7256-49E4-92E7-D08A3EF2447C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online_Marketplace.BLL", "Online Marketplace\Online_Marketplace.BLL\Online_Marketplace.BLL.csproj", "{7461321E-B6AC-450C-8454-20CC9A774AA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.BLL", "Online Marketplace\Online_Marketplace.BLL\Online_Marketplace.BLL.csproj", "{7461321E-B6AC-450C-8454-20CC9A774AA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Online_Marketplace.Shared", "Online Marketplace\Online_Marketplace.Shared\Online_Marketplace.Shared.csproj", "{82A078FC-42C5-40DA-B5A1-135E42764DD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.Shared", "Online Marketplace\Online_Marketplace.Shared\Online_Marketplace.Shared.csproj", "{82A078FC-42C5-40DA-B5A1-135E42764DD8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.Logger", "Online Marketplace\Online_Marketplace.Logger\Online_Marketplace.Logger.csproj", "{676C5D00-249E-4F94-973D-6CF91DEBFADF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Online_Marketplace.Contracts", "Online Marketplace\Online_Marketplace.Contracts\Online_Marketplace.Contracts.csproj", "{CBF7A80D-9062-435C-A2E1-05450B181DE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{82A078FC-42C5-40DA-B5A1-135E42764DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82A078FC-42C5-40DA-B5A1-135E42764DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82A078FC-42C5-40DA-B5A1-135E42764DD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{676C5D00-249E-4F94-973D-6CF91DEBFADF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{676C5D00-249E-4F94-973D-6CF91DEBFADF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{676C5D00-249E-4F94-973D-6CF91DEBFADF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{676C5D00-249E-4F94-973D-6CF91DEBFADF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBF7A80D-9062-435C-A2E1-05450B181DE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBF7A80D-9062-435C-A2E1-05450B181DE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBF7A80D-9062-435C-A2E1-05450B181DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBF7A80D-9062-435C-A2E1-05450B181DE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
