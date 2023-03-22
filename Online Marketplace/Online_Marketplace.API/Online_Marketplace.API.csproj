@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Online_Marketplace.BLL\Online_Marketplace.BLL.csproj" />
     <ProjectReference Include="..\Online_Marketplace.Logger\Online_Marketplace.Logger.csproj" />
+    <ProjectReference Include="..\Online_Marketplace.Presentation\Online_Marketplace.Presentation.csproj" />
     <ProjectReference Include="..\Online_Marketplace.Shared\Online_Marketplace.Shared.csproj" />
   </ItemGroup>
 
