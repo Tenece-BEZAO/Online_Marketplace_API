@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.HttpOverrides;
+using NLog;
+using Online_Marketplace.API.Extensions;
+
 namespace Online_Marketplace.API
 {
     public class Program
@@ -6,6 +10,10 @@ namespace Online_Marketplace.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.ConfigureCors();
+            builder.Services.ConfigureIISIntegration();
+
+            builder.Services.ConfigureLoggerService();
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -15,6 +23,8 @@ namespace Online_Marketplace.API
 
             var app = builder.Build();
 
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -23,6 +33,13 @@ namespace Online_Marketplace.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 

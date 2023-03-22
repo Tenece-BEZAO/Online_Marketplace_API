@@ -10,4 +10,9 @@
     <ProjectReference Include="..\Online_Marketplace.DAL\Online_Marketplace.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interface\" />
+    <Folder Include="Implementation\" />
+  </ItemGroup>
+
 </Project>

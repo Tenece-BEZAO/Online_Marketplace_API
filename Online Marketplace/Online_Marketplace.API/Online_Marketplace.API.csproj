@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NLog" Version="5.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Online_Marketplace.BLL\Online_Marketplace.BLL.csproj" />
+    <ProjectReference Include="..\Online_Marketplace.Logger\Online_Marketplace.Logger.csproj" />
     <ProjectReference Include="..\Online_Marketplace.Shared\Online_Marketplace.Shared.csproj" />
   </ItemGroup>
 
