@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
 using Online_Marketplace.API.Extensions;
+using Online_Marketplace.Shared.Filters;
+using System.Reflection;
+
 
 namespace Online_Marketplace.API
 {
@@ -14,16 +17,24 @@ namespace Online_Marketplace.API
             builder.Services.ConfigureIISIntegration();
 
             builder.Services.ConfigureLoggerService();
+            builder.Services.ConfigureAuthService();
 
             builder.Services.AddAuthentication();
             builder.Services.ConfigureIdentity();
 
+            builder.Services.ConfigureJWT(builder.Configuration);
+
             builder.Services.ConfigureSqlContext(builder.Configuration);
+
+            builder.Services.AddScoped<ValidationFilterAttribute>();
 
             builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddAutoMapper(Assembly.Load("Online_Marketplace.BLL"));
+
 
             var app = builder.Build();
 
