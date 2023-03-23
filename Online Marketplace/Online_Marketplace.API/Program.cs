@@ -14,7 +14,11 @@ namespace Online_Marketplace.API
             builder.Services.ConfigureIISIntegration();
 
             builder.Services.ConfigureLoggerService();
-            // Add services to the container.
+
+            builder.Services.AddAuthentication();
+            builder.Services.ConfigureIdentity();
+
+            builder.Services.ConfigureSqlContext(builder.Configuration);
 
             builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -41,6 +45,7 @@ namespace Online_Marketplace.API
             });
             app.UseCors("CorsPolicy");
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
