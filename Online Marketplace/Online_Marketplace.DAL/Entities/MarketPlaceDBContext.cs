@@ -19,6 +19,8 @@ namespace Online_Marketplace.DAL.Entities
 
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
 
         public DbSet<Product> Products { get; set; }
