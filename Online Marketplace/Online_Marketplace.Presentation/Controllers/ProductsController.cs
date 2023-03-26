@@ -5,10 +5,9 @@ namespace Online_Marketplace.Presentation.Controllers
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        [HttpGet(Name = "CreateProduct")]
-        [Authorize(Roles = "Seller")]
+        [HttpGet("CreateProduct")]
         public async Task<IActionResult> CreateProduct()
         {
             return null;

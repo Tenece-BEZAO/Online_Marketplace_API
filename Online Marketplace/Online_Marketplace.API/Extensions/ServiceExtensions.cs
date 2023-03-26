@@ -53,10 +53,10 @@ namespace Online_Marketplace.API.Extensions
             .AddEntityFrameworkStores<MarketPlaceDBContext>()
             .AddDefaultTokenProviders();
         }
-        public static void ConfigureAuthService(this IServiceCollection services) =>
-
-       services.AddScoped<IAuthService, AuthService>();
-
+        public static void ConfigureAuthServices(this IServiceCollection services)
+        {
+            services.AddScoped<IAuthService, AuthService>();
+        }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
@@ -80,6 +80,15 @@ namespace Online_Marketplace.API.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
                 };
             });
+        }
+
+        public static void ConfigureServices(this IServiceCollection services)
+        {
+            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IAdminServices, AdminServices>();
+            services.AddScoped<IBuyerServices, BuyerServices>();
+            services.AddScoped<ISellerServices, SellerServices>();
+            
         }
 
     }

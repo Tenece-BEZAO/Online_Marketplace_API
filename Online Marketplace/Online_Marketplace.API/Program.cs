@@ -1,6 +1,9 @@
+using Contracts;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.OpenApi.Models;
 using NLog;
 using Online_Marketplace.API.Extensions;
+using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.Shared.Filters;
 using System.Reflection;
 
@@ -17,7 +20,7 @@ namespace Online_Marketplace.API
             builder.Services.ConfigureIISIntegration();
 
             builder.Services.ConfigureLoggerService();
-            builder.Services.ConfigureAuthService();
+            builder.Services.ConfigureAuthServices();
 
             builder.Services.AddAuthentication();
             builder.Services.ConfigureIdentity();
@@ -28,10 +31,46 @@ namespace Online_Marketplace.API
 
             builder.Services.AddScoped<ValidationFilterAttribute>();
 
-            builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly); 
+            builder.Services.AddControllers().AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.EnableAnnotations();
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MarketPlaceApp", Version = "v1" });
+
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\""
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                            Array.Empty<string>()
+                    },
+                });
+            });
+
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork<MarketPlaceDBContext>>();
+
+            builder.Services.ConfigureServices();
 
             builder.Services.AddAutoMapper(Assembly.Load("Online_Marketplace.BLL"));
 

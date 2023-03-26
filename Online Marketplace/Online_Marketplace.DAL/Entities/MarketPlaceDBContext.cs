@@ -20,10 +20,14 @@ namespace Online_Marketplace.DAL.Entities
 
             base.OnModelCreating(modelBuilder);
 
+
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
 
-        public DbSet<Product> Products { get; set; }
 
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Seller> Sellers { get; set; }
+        public DbSet<Buyer> Buyers { get; set; }
+        public DbSet<Product> Products { get; set; }
     }
 }
