@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -7,7 +6,7 @@ namespace Online_Marketplace.Presentation.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        [HttpGet("CreateProduct")]
+        [HttpPost("CreateProduct")]
         public async Task<IActionResult> CreateProduct()
         {
             return null;

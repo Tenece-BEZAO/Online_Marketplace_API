@@ -11,7 +11,6 @@ namespace Online_Marketplace.DAL.Entities.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
-        public bool IsSeller { get; set; }
         public string PhoneNumber { get; set; }
         public string UserId { get; set; }
 

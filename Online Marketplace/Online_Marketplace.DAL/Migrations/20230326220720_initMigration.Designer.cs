@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230326165008_CreatedAdminsTable")]
-    partial class CreatedAdminsTable
+    [Migration("20230326220720_initMigration")]
+    partial class initMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f792a2dc-2930-4f30-a51a-b05bebaa7488",
-                            ConcurrencyStamp = "2f5bacf0-3d38-46aa-a6ab-cf2ed7c4a7cf",
+                            Id = "b080fb01-e75d-4f86-b8ab-8ad16dc130f2",
+                            ConcurrencyStamp = "0515c6aa-1af4-40c6-ae09-d088d95a7e33",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7b65ce7a-33a5-4fd2-bc7b-cd8eb76eaea8",
-                            ConcurrencyStamp = "a16da008-3118-4523-a8b9-4c150e124183",
+                            Id = "f6606551-36a1-4353-b257-ab5e36fd2ac6",
+                            ConcurrencyStamp = "1d9ce7f2-7093-4ca5-b930-70a273604725",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "085f539d-d022-4e76-a7af-f6ea51681645",
-                            ConcurrencyStamp = "3ba519c5-b9c7-47c7-9b3c-2de0bd6cfae5",
+                            Id = "a67104ee-1a60-46ec-a45c-07e4f694f25b",
+                            ConcurrencyStamp = "25741cc3-2e56-4fec-82bc-b97c390d6c85",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -189,10 +189,6 @@ namespace Online_Marketplace.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -200,9 +196,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -247,9 +240,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -293,9 +283,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -337,9 +324,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
