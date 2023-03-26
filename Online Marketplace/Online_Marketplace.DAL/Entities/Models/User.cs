@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Marketplace.DAL.Entities.Models
 {
@@ -6,5 +7,7 @@ namespace Online_Marketplace.DAL.Entities.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public bool IsSeller { get; set; }
+        
     }
 }

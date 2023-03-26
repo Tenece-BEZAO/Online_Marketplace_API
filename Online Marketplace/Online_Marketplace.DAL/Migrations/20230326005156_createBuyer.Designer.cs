@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230323092904_AddedRolesToDb")]
-    partial class AddedRolesToDb
+    [Migration("20230326005156_createBuyer")]
+    partial class createBuyer
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "06fbda32-c80e-49da-b0bd-a8fd5c16f4bf",
-                            ConcurrencyStamp = "3e391db4-88a0-47fb-b13a-e654a29de225",
+                            Id = "53db148c-45bf-43fd-9d43-81cf25e3c922",
+                            ConcurrencyStamp = "3dd5d0b7-43f5-4efe-8894-cc78b37851b3",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f5be898a-46ce-40b6-a9e1-7e21e7a7aad5",
-                            ConcurrencyStamp = "b0a06102-fd75-48e3-be51-84a2c718ccaf",
+                            Id = "90a96181-03fb-4b13-99fa-07ba2f5ea11b",
+                            ConcurrencyStamp = "57219852-de1a-4d27-a3d3-4b9e6f1af878",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "133f0578-cf5f-454c-a982-a024354e821e",
-                            ConcurrencyStamp = "0a9b6694-c04d-46ed-9599-2b02d0cfe9de",
+                            Id = "a511a8c6-803c-424c-bc02-fa0f46f206fc",
+                            ConcurrencyStamp = "e3c4737f-3e62-4fa1-b6d0-6dc034e88081",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -181,6 +181,94 @@ namespace Online_Marketplace.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Buyer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSeller")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Buyers");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Seller", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSeller")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Sellers");
+                });
+
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -203,6 +291,9 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSeller")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -342,6 +433,28 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Buyer", b =>
+                {
+                    b.HasOne("Online_Marketplace.DAL.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Seller", b =>
+                {
+                    b.HasOne("Online_Marketplace.DAL.Entities.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

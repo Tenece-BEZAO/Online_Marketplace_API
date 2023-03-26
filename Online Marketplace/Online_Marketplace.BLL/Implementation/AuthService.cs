@@ -1,10 +1,10 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
+using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,45 +15,69 @@ namespace Online_Marketplace.BLL.Implementation
     public sealed class AuthService : IAuthService
     {
         private readonly ILoggerManager _logger;
-        private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
         private User? _user;
 
 
-        public AuthService(ILoggerManager logger, IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+        public AuthService(ILoggerManager logger, UserManager<User> userManager, IConfiguration configuration)
         {
             _logger = logger;
-            _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
         }
 
-        public async Task<IdentityResult> RegisterUser(UserForRegistrationDto userForRegistration)
-        {
-            var user = _mapper.Map<User>(userForRegistration);
-            var result = await _userManager.CreateAsync(user, userForRegistration.Password);
 
-            if (result.Succeeded)
-                await _userManager.AddToRolesAsync(user, userForRegistration.Roles);
-            return result;
-        }
 
-        public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
+        public async Task<ServiceResponse<string>> ValidateUser(UserForAuthenticationDto userForAuth)
         {
-            _user = await _userManager.FindByNameAsync(userForAuth.UserName);
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
-            if (!result)
-                _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong username or password.");
-            return result;
+            try
+            {
+                _logger.LogInfo("Validates user and logs them in");
+
+                _user = await _userManager.FindByNameAsync(userForAuth.UserName);
+
+                var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
+                if (!result)
+                {
+                    _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong username or password.");
+
+                    return new ServiceResponse<string>
+                    {
+                        Success = false,
+                        Message = "Login failed. Wrong username or password."
+                    };
+                }
+                return new ServiceResponse<string>
+                {
+                    Success = true,
+                    Message = "Login successful. Wrong username or password."
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(ValidateUser)} service method {ex}");
+                throw;
+            }
         }
 
         public async Task<string> CreateToken()
         {
-            var signingCredentials = GetSigningCredentials();
-            var claims = await GetClaims();
-            var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
-            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            try
+            {
+                _logger.LogInfo("Creates the JWT token");
+
+                var signingCredentials = GetSigningCredentials();
+                var claims = await GetClaims();
+                var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+                return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(CreateToken)} service method {ex}");
+                throw;
+            }
+
         }
 
         private static SigningCredentials GetSigningCredentials()
@@ -61,6 +85,7 @@ namespace Online_Marketplace.BLL.Implementation
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"));
             var secret = new SymmetricSecurityKey(key);
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+
         }
 
         private async Task<List<Claim>> GetClaims()
@@ -90,7 +115,6 @@ namespace Online_Marketplace.BLL.Implementation
             );
             return tokenOptions;
         }
-
 
 
     }
