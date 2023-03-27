@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
