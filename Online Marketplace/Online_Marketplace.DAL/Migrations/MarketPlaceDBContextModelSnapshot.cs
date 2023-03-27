@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "54b76c66-1a5b-48d1-bd84-6880431e46c0",
-                            ConcurrencyStamp = "9d198ccb-3446-4473-a40a-1ddbf6c2f327",
+                            Id = "554e9017-9000-4127-afb9-46797c5d6f8b",
+                            ConcurrencyStamp = "21852779-bec4-4a92-9d67-0da27b2c4890",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "52fe4a2b-ede1-4252-98b5-092b9131d08f",
-                            ConcurrencyStamp = "944e8560-2069-4821-8859-e61892d2eda7",
+                            Id = "62456111-f1fb-4359-9454-9c7a26273a15",
+                            ConcurrencyStamp = "2808262a-400d-449d-952e-782670590fc8",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "b13ed7c9-2c5a-41f2-a2b1-7c39eca4f029",
-                            ConcurrencyStamp = "bd841a01-2aa7-45a9-a4f8-a912dc8353cd",
+                            Id = "b1dc80bf-c534-417a-802c-b7b8de31fd34",
+                            ConcurrencyStamp = "cd841933-d368-48bd-b19b-2adba11f89c7",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -388,8 +388,7 @@ namespace Online_Marketplace.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ProductId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -399,26 +398,25 @@ namespace Online_Marketplace.DAL.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Products");
                 });
@@ -505,6 +503,22 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Product", b =>
+                {
+                    b.HasOne("Online_Marketplace.DAL.Entities.Models.Seller", "Seller")
+                        .WithMany("Products")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Seller", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

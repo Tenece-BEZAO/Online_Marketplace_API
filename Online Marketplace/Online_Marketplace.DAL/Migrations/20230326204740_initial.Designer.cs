@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230326165008_CreatedAdminsTable")]
-    partial class CreatedAdminsTable
+    [Migration("20230326204740_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f792a2dc-2930-4f30-a51a-b05bebaa7488",
-                            ConcurrencyStamp = "2f5bacf0-3d38-46aa-a6ab-cf2ed7c4a7cf",
+                            Id = "e38a3e7a-56b8-47ce-b756-6b5fb23ea0b7",
+                            ConcurrencyStamp = "d228d787-4fd7-4f12-8035-42bb5bdc3aa6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "7b65ce7a-33a5-4fd2-bc7b-cd8eb76eaea8",
-                            ConcurrencyStamp = "a16da008-3118-4523-a8b9-4c150e124183",
+                            Id = "61a2bc2c-a727-41cf-bff7-e19ae6df2c5c",
+                            ConcurrencyStamp = "a2f2c4e9-3bd2-46e3-b593-d02fbb2e3c0b",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "085f539d-d022-4e76-a7af-f6ea51681645",
-                            ConcurrencyStamp = "3ba519c5-b9c7-47c7-9b3c-2de0bd6cfae5",
+                            Id = "43d02261-a271-4439-adff-97eb53c3c3b3",
+                            ConcurrencyStamp = "d526ccbf-9b9e-44fe-8119-383c9a338f79",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -188,10 +188,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()

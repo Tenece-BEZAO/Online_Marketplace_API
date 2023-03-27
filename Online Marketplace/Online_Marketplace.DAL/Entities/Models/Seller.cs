@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Marketplace.DAL.Entities.Models
 {
@@ -15,5 +17,8 @@ namespace Online_Marketplace.DAL.Entities.Models
         public string UserId { get; set; }
 
         public User User { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }
+
+
