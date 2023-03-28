@@ -54,7 +54,6 @@ namespace Online_Marketplace.BLL.Implementation
                     PhoneNumber = buyerForRegistration.PhoneNumber,
                     Email = buyerForRegistration.Email,
                     Address= buyerForRegistration.Address,
-                    IsSeller = false,
                     UserId = user.Id
 
                 };

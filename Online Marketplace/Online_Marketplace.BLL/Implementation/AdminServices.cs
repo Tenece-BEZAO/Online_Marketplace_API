@@ -53,7 +53,6 @@ namespace Online_Marketplace.BLL.Implementation
                     UserName = adminForRegistration.UserName,
                     PhoneNumber = adminForRegistration.PhoneNumber,
                     Email = adminForRegistration.Email,
-                    IsSeller = false,
                     UserId = user.Id
 
                 };

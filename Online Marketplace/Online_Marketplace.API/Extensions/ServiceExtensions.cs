@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Online_Marketplace.BLL.Implementation;
 using Online_Marketplace.BLL.Interface;
@@ -88,7 +89,9 @@ namespace Online_Marketplace.API.Extensions
             services.AddScoped<IAdminServices, AdminServices>();
             services.AddScoped<IBuyerServices, BuyerServices>();
             services.AddScoped<ISellerServices, SellerServices>();
-            
+            services.AddScoped<IProductService, ProductServices>();
+           
+
         }
 
     }

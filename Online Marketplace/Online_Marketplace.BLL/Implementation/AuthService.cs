@@ -6,6 +6,7 @@ using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -69,6 +70,8 @@ namespace Online_Marketplace.BLL.Implementation
 
                 var signingCredentials = GetSigningCredentials();
                 var claims = await GetClaims();
+
+
                 var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
                 return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             }
@@ -88,17 +91,23 @@ namespace Online_Marketplace.BLL.Implementation
 
         }
 
-        private async Task<List<Claim>> GetClaims()
+        private async Task<List<Claim>> GetClaims( )
         {
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user.UserName)
-             };
+                new Claim(JwtRegisteredClaimNames.Sub, _user.Id.ToString()),
+                new Claim(ClaimTypes.Name, _user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, _user.Id.ToString())
+            };
+
             var roles = await _userManager.GetRolesAsync(_user);
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
+
             return claims;
         }
 

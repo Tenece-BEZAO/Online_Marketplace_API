@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "54b76c66-1a5b-48d1-bd84-6880431e46c0",
-                            ConcurrencyStamp = "9d198ccb-3446-4473-a40a-1ddbf6c2f327",
+                            Id = "2719085e-9dcd-4427-8b91-bdc39e43f04f",
+                            ConcurrencyStamp = "5a1c3957-2777-40da-80a8-cced4e91e59d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "52fe4a2b-ede1-4252-98b5-092b9131d08f",
-                            ConcurrencyStamp = "944e8560-2069-4821-8859-e61892d2eda7",
+                            Id = "fe8298ae-e6fb-4796-b020-f1a6bac1e8c4",
+                            ConcurrencyStamp = "dcfb1918-6188-4638-a05a-5cfd4acaa230",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "b13ed7c9-2c5a-41f2-a2b1-7c39eca4f029",
-                            ConcurrencyStamp = "bd841a01-2aa7-45a9-a4f8-a912dc8353cd",
+                            Id = "8618c7ea-9af9-4756-8e9a-7de2db89edfc",
+                            ConcurrencyStamp = "c08e97df-a748-4e63-99e2-f97710bbdaea",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -194,9 +194,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -239,9 +236,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -286,9 +280,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -330,9 +321,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsSeller")
-                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -388,8 +376,7 @@ namespace Online_Marketplace.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ProductId");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -399,26 +386,25 @@ namespace Online_Marketplace.DAL.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
                     b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Products");
                 });
@@ -505,6 +491,22 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Product", b =>
+                {
+                    b.HasOne("Online_Marketplace.DAL.Entities.Models.Seller", "Seller")
+                        .WithMany("Products")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Models.Seller", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Online_Marketplace.DAL.Entities.Models
 {
@@ -10,10 +12,12 @@ namespace Online_Marketplace.DAL.Entities.Models
         public string LastName { get; set; }
         public string BusinessName { get; set; }
         public string Email { get; set; }
-        public bool IsSeller { get; set; } 
         public string PhoneNumber { get; set; }
         public string UserId { get; set; }
 
         public User User { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }
+
+

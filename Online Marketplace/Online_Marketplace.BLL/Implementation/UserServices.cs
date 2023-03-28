@@ -44,7 +44,6 @@ namespace Online_Marketplace.BLL.Implementation
                 {
                     FirstName = userForRegistration.FirstName,
                     LastName = userForRegistration.LastName,
-                    IsSeller = false,
                     UserName = userForRegistration.UserName,
                     Email = userForRegistration.Email,
                     PhoneNumber = userForRegistration.PhoneNumber
@@ -67,9 +66,11 @@ namespace Online_Marketplace.BLL.Implementation
             catch (Exception ex)
             {
                 _logger.LogError($"Something went wrong in the {nameof(RegisterUser)} service method {ex}");
+
                 throw;
             }
         }
+
         public void GetUserProfile()
         {
             throw new NotImplementedException();
