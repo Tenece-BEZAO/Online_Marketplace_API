@@ -1,16 +1,21 @@
-﻿using Online_Marketplace.BLL.Interface;
-using Online_Marketplace.DAL.Entities;
+﻿using AutoMapper;
 using Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+
 
 namespace Online_Marketplace.BLL.Implementation
 {
+
+
+
+
     public class ProductServices : IProductService
     {
         private readonly IMapper _mapper;
@@ -20,9 +25,14 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        /* private readonly string userId;*/
+
+        private User? _user;
+
 
         public ProductServices(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
+
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -30,30 +40,37 @@ namespace Online_Marketplace.BLL.Implementation
             _mapper = mapper;
             _productRepo = _unitOfWork.GetRepository<Product>();
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
-
+            /*            userId = _httpContextAccessor.HttpContext.User.GetUserId();
+            */
         }
+
+
 
         public async Task<Product> CreateProduct(ProductCreateDto productDto)
         {
             try
             {
-                var product = _mapper.Map<Product>(productDto);
 
-              
-                var currentUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-               
 
-                if (currentUser == null)
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (userId == null)
                 {
                     throw new Exception("User not found");
                 }
 
-              
-                var seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == currentUser.Id);
-                
 
-            
-                product.Seller = seller;
+                var product = _mapper.Map<Product>(productDto);
+
+
+                Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+                if (seller == null)
+                {
+                    throw new Exception("Seller not found");
+                }
+
+                product.SellerId = seller.Id;
 
                 await _productRepo.AddAsync(product);
                 await _unitOfWork.SaveChangesAsync();
@@ -62,13 +79,69 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
-                // Log the error
+
                 _logger.LogError($"Something went wrong in the {nameof(CreateProduct)} service method {ex}");
 
-                // Rethrow the exception
+
                 throw;
             }
         }
+
+        public async Task<List<ProductCreateDto>> GetProducts(ProductSearchDto searchDto)
+        {
+            try
+            {
+
+                var products = await _productRepo.GetAllAsync();
+
+
+                if (!string.IsNullOrEmpty(searchDto.Search))
+                {
+                    products = products.Where(p => p.Name.Contains(searchDto.Search, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+
+                var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
+
+                return productDtos;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Something went wrong in the {nameof(GetProducts)} service method {ex}");
+
+
+                throw;
+            }
+        }
+       
+        public async Task<List<ProductCreateDto>> ViewProducts()
+        {
+            try
+            {
+                var products = await _productRepo.GetAllAsync();
+
+                
+                var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
+
+                return productDtos;
+            }
+            catch (Exception ex)
+            {
+               
+                _logger.LogError($"Something went wrong in the {nameof(ViewProducts)} service method {ex}");
+
+               
+                throw;
+            }
+        }
+
+
+
+
+
+
+
 
 
     }

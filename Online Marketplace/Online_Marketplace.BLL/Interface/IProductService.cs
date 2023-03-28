@@ -5,6 +5,9 @@ namespace Online_Marketplace.BLL.Interface
 {
     public interface IProductService
     {
-        public Task <Product> CreateProduct(ProductCreateDto productdto);
+
+        public Task<Product> CreateProduct(ProductCreateDto productDto);
+        public Task<List<ProductCreateDto>> GetProducts(ProductSearchDto searchDto);
+        public Task<List<ProductCreateDto>> ViewProducts();
     }
 }
