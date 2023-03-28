@@ -25,7 +25,7 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        /* private readonly string userId;*/
+        
 
         private User? _user;
 
@@ -40,8 +40,7 @@ namespace Online_Marketplace.BLL.Implementation
             _mapper = mapper;
             _productRepo = _unitOfWork.GetRepository<Product>();
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
-            /*            userId = _httpContextAccessor.HttpContext.User.GetUserId();
-            */
+            
         }
 
 
