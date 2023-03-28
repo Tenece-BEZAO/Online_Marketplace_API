@@ -1,11 +1,11 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Identity;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Implementation
+namespace Online_Marketplace.BLL.Implementation.Services
 {
     public sealed class SellerServices : ISellerServices
     {
@@ -52,14 +52,14 @@ namespace Online_Marketplace.BLL.Implementation
                     LastName = sellerForRegistration.LastName,
                     PhoneNumber = sellerForRegistration.PhoneNumber,
                     Email = sellerForRegistration.Email,
-                    BusinessName= sellerForRegistration.BusinessName,
+                    BusinessName = sellerForRegistration.BusinessName,
                     UserId = user.Id
 
                 };
 
                 var result = await _sellerRepo.AddAsync(seller);
 
-                return ($"Registration Successful! You can now start listing your product!");
+                return $"Registration Successful! You can now start listing your product!";
             }
             catch (Exception ex)
             {

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class AdjustedprofileRelationship : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,30 @@ namespace Online_Marketplace.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShoppingCart",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShoppingCart", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Wishlist",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wishlist", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,6 +258,121 @@ namespace Online_Marketplace.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AdminProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdminIdentity = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdminProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AdminProfiles_Admins_AdminIdentity",
+                        column: x => x.AdminIdentity,
+                        principalTable: "Admins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BuyerProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WishlistId = table.Column<int>(type: "int", nullable: false),
+                    ShoppingCartId = table.Column<int>(type: "int", nullable: false),
+                    BuyerIdentity = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BuyerProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BuyerProfiles_Buyers_BuyerIdentity",
+                        column: x => x.BuyerIdentity,
+                        principalTable: "Buyers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BuyerProfiles_ShoppingCart_ShoppingCartId",
+                        column: x => x.ShoppingCartId,
+                        principalTable: "ShoppingCart",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BuyerProfiles_Wishlist_WishlistId",
+                        column: x => x.WishlistId,
+                        principalTable: "Wishlist",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SellerProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BusinessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BusinessDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SellerIdentity = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SellerProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SellerProfiles_Sellers_SellerIdentity",
+                        column: x => x.SellerIdentity,
+                        principalTable: "Sellers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BuyerProfileId = table.Column<int>(type: "int", nullable: true),
+                    SellerProfileId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_BuyerProfiles_BuyerProfileId",
+                        column: x => x.BuyerProfileId,
+                        principalTable: "BuyerProfiles",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Order_SellerProfiles_SellerProfileId",
+                        column: x => x.SellerProfileId,
+                        principalTable: "SellerProfiles",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -244,11 +383,17 @@ namespace Online_Marketplace.DAL.Migrations
                     Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     StockQuantity = table.Column<int>(type: "int", nullable: false),
                     Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SellerId = table.Column<int>(type: "int", nullable: false)
+                    SellerId = table.Column<int>(type: "int", nullable: false),
+                    SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_SellerProfiles_SellerProfileId",
+                        column: x => x.SellerProfileId,
+                        principalTable: "SellerProfiles",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Products_Sellers_SellerId",
                         column: x => x.SellerId,
@@ -262,10 +407,15 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2719085e-9dcd-4427-8b91-bdc39e43f04f", "5a1c3957-2777-40da-80a8-cced4e91e59d", "Admin", "ADMIN" },
-                    { "8618c7ea-9af9-4756-8e9a-7de2db89edfc", "c08e97df-a748-4e63-99e2-f97710bbdaea", "Buyer", "BUYER" },
-                    { "fe8298ae-e6fb-4796-b020-f1a6bac1e8c4", "dcfb1918-6188-4638-a05a-5cfd4acaa230", "Seller", "SELLER" }
+                    { "370cbbb8-601b-4e62-8df5-ad9893237268", "f32a9d2d-205a-49af-942c-0ee01b323fc6", "Admin", "ADMIN" },
+                    { "71a260ce-e991-42fe-94bf-fc9450afae6c", "a7a50a4c-01eb-42db-a77f-b87fbdfcbf9c", "Buyer", "BUYER" },
+                    { "c599d117-7cd5-45b2-b85d-7ef6444d136d", "d711c67d-365c-4e00-b968-be179bf4540e", "Seller", "SELLER" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdminProfiles_AdminIdentity",
+                table: "AdminProfiles",
+                column: "AdminIdentity");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Admins_UserId",
@@ -312,14 +462,49 @@ namespace Online_Marketplace.DAL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BuyerProfiles_BuyerIdentity",
+                table: "BuyerProfiles",
+                column: "BuyerIdentity");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BuyerProfiles_ShoppingCartId",
+                table: "BuyerProfiles",
+                column: "ShoppingCartId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BuyerProfiles_WishlistId",
+                table: "BuyerProfiles",
+                column: "WishlistId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Buyers_UserId",
                 table: "Buyers",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_BuyerProfileId",
+                table: "Order",
+                column: "BuyerProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_SellerProfileId",
+                table: "Order",
+                column: "SellerProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
                 table: "Products",
                 column: "SellerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SellerProfileId",
+                table: "Products",
+                column: "SellerProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SellerProfiles_SellerIdentity",
+                table: "SellerProfiles",
+                column: "SellerIdentity");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sellers_UserId",
@@ -331,7 +516,7 @@ namespace Online_Marketplace.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Admins");
+                name: "AdminProfiles");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -349,13 +534,31 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Buyers");
+                name: "Order");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
+                name: "Admins");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "BuyerProfiles");
+
+            migrationBuilder.DropTable(
+                name: "SellerProfiles");
+
+            migrationBuilder.DropTable(
+                name: "Buyers");
+
+            migrationBuilder.DropTable(
+                name: "ShoppingCart");
+
+            migrationBuilder.DropTable(
+                name: "Wishlist");
 
             migrationBuilder.DropTable(
                 name: "Sellers");

@@ -1,12 +1,12 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Identity;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Implementation
+namespace Online_Marketplace.BLL.Implementation.Services
 {
     public sealed class UserServices : IUserServices
     {
@@ -60,7 +60,7 @@ namespace Online_Marketplace.BLL.Implementation
                     throw new InvalidOperationException($"Failed to create user:\n{errMsg}");
                 }
 
-                return (user);
+                return user;
 
             }
             catch (Exception ex)

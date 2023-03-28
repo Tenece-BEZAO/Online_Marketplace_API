@@ -72,7 +72,7 @@ namespace Online_Marketplace.API
 
             builder.Services.ConfigureServices();
 /*            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("jwt"));
-*/            builder.Services.AddHttpContextAccessor();
+*/          builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddAutoMapper(Assembly.Load("Online_Marketplace.BLL"));
 
