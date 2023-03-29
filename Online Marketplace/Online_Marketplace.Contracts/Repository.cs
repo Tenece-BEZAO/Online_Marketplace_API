@@ -15,6 +15,9 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = _dbContext.Set<T>();
     }
 
+    
+
+
     public virtual T Add(T obj)
     {
         try

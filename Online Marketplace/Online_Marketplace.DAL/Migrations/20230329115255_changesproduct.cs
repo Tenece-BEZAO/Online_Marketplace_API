@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class changesproduct : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,19 @@ namespace Online_Marketplace.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -234,6 +247,27 @@ namespace Online_Marketplace.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CartItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartItems_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -262,9 +296,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2719085e-9dcd-4427-8b91-bdc39e43f04f", "5a1c3957-2777-40da-80a8-cced4e91e59d", "Admin", "ADMIN" },
-                    { "8618c7ea-9af9-4756-8e9a-7de2db89edfc", "c08e97df-a748-4e63-99e2-f97710bbdaea", "Buyer", "BUYER" },
-                    { "fe8298ae-e6fb-4796-b020-f1a6bac1e8c4", "dcfb1918-6188-4638-a05a-5cfd4acaa230", "Seller", "SELLER" }
+                    { "3ce4bc67-c7f2-4161-832a-06a7ec32a2a8", "aa923ee4-d2d4-4715-a2f3-19cab08e3259", "Seller", "SELLER" },
+                    { "bf03adbb-6ad7-4ae8-83ca-902d895db331", "ad52a97a-2292-4ac2-ad76-208123254749", "Admin", "ADMIN" },
+                    { "c8fa28b4-a482-475a-b6dd-4da80399b4d1", "6e879877-7d9f-4797-8ac4-fec8250c1cea", "Buyer", "BUYER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -317,6 +351,11 @@ namespace Online_Marketplace.DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CartItems_CartId",
+                table: "CartItems",
+                column: "CartId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
                 table: "Products",
                 column: "SellerId");
@@ -352,10 +391,16 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "Buyers");
 
             migrationBuilder.DropTable(
+                name: "CartItems");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Carts");
 
             migrationBuilder.DropTable(
                 name: "Sellers");

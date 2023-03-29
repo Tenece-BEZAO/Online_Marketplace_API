@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 
@@ -41,7 +42,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [AllowAnonymous]
     
-        public async Task<ActionResult<List<ProductCreateDto>>> GetProducts([FromQuery] ProductSearchDto searchDto)
+        public async Task<ActionResult<List<ProductCreateDto>>> SearchProducts([FromQuery] ProductSearchDto searchDto)
         {
             try
             {
@@ -76,6 +77,80 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+        [Authorize(Roles = "Buyer")]
+        [HttpPost("add-to-cart")]
+        public async Task<IActionResult> AddToCart(int productId, int quantity)
+        {
+            try
+            {
+                var result = await _productService.AddToCartAsync(productId, quantity);
+
+                if (result)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Failed to add product to cart.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while adding product with ID {productId} to cart: {ex}");
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [Authorize(Roles = "Seller")]
+        [HttpPut("Edit")]
+        public async Task<ActionResult<Product>> UpdateProduct(int id, ProductCreateDto productDto)
+        {
+            try
+            {
+                var updatedProduct = await _productService.UpdateProduct(id, productDto);
+
+                return Ok(updatedProduct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(UpdateProduct)} controller method {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+        [Authorize(Roles = "Seller")]
+        [HttpDelete("Delete/{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                await _productService.DeleteProduct(id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong in the {nameof(DeleteProduct)} controller method {ex}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
+            }
+        }
+
+        [Authorize(Roles = "Seller")]
+        [HttpGet("seller/products")]
+        public async Task<ActionResult<List<ProductCreateDto>>> GetSellerProducts()
+        {
+            try
+            {
+                var products = await _productService.GetSellerProducts();
+                return Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving seller products.", error = ex.Message });
+            }
+        }
+
+
 
     }
 
