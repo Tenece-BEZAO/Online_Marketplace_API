@@ -44,6 +44,7 @@ namespace Online_Marketplace.BLL.Implementation
             _productRepo = _unitOfWork.GetRepository<Product>();
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
             _cartRepo = _unitOfWork.GetRepository<Cart>();
+            _buyerRepo = _unitOfWork.GetRepository<Buyer>();
 
         }
 
@@ -243,74 +244,23 @@ namespace Online_Marketplace.BLL.Implementation
             }
         }
 
-        
-
-     /*   public async Task<Order> CheckoutAsync()
-        {
 
 
-            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+      
 
-            var cart = await _cartRepo.GetSingleByAsync(c => c.UserId == userId, include: q => q.Include(c => c.CartItems));
 
-            if (cart == null || !cart.CartItems.Any())
-            {
-                throw new Exception("Cannot checkout empty cart.");
-            }
-
-            var orderItems = new List<OrderItem>();
-            decimal orderTotal = 0;
-
-            foreach (var cartItem in cart.CartItems)
-            {
-                var product = await _productRepo.GetByIdAsync(cartItem.ProductId);
-
-                if (product == null)
-                {
-                    throw new Exception("Product not found");
-                }
-
-                if (product.StockQuantity < cartItem.Quantity)
-                {
-                    throw new Exception("Insufficient product quantity.");
-                }
-
-                product.StockQuantity -= cartItem.Quantity;
-
-                var orderItem = new OrderItem
-                {
-                    ProductId = cartItem.ProductId,
-                    Quantity = cartItem.Quantity,
-                    Price = product.Price
-                };
-
-                orderTotal += orderItem.Price * orderItem.Quantity;
-                orderItems.Add(orderItem);
-
-                await _productRepo.UpdateAsync(product);
-            }
-
-            var order = new Order
-            {
-                UserId = userId,
-                OrderItems = orderItems,
-                TotalAmount = orderTotal
-            };
-
-            _orderRepo.Add(order);
-            await _orderRepo.SaveAsync();
-
-            _cartRepo.Remove(cart);
-            await _cartRepo.SaveAsync();
-
-            return order;
-        }*/
-
-    /*    public async Task<bool> AddToCartAsync(int productId, int quantity)
+        public async Task<bool> AddToCartAsync(int productId, int quantity)
         {
             try
             {
-                var buyerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
+
+                if (buyer == null)
+                {
+                    throw new Exception("Buyer not found");
+                }
 
                 var product = await _productRepo.GetByIdAsync(productId);
 
@@ -324,19 +274,13 @@ namespace Online_Marketplace.BLL.Implementation
                     throw new ArgumentException("Invalid quantity.");
                 }
 
-                var cart = await _cartRepo.GetSingleByAsync(c => c.BuyerId == buyerId, include: q => q.Include(c => c.CartItems));
+                var cart = await _cartRepo.GetSingleByAsync(c => c.BuyerId == buyer.Id, include: q => q.Include(c => c.CartItems));
 
                 if (cart == null)
                 {
-                    var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == buyerId);
-                    if (buyer == null)
-                    {
-                        throw new Exception("Buyer not found");
-                    }
-
-                    cart = new Cart { BuyerId = buyer.Id, Buyer = buyer };
-                    await _cartRepo.AddAsync(cart);
-                    await _cartRepo.SaveAsync();
+                    cart = new Cart { BuyerId = buyer.Id };
+                    await _cartRepo.AddAsync(cart); 
+                   
                 }
 
                 if (cart.CartItems == null)
@@ -362,78 +306,7 @@ namespace Online_Marketplace.BLL.Implementation
 
                 await _cartRepo.UpdateAsync(cart);
 
-                _logger.LogInfo($"Added product with ID {productId} to cart of buyer with ID {buyerId}");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"An error occurred while adding product with ID {productId} to cart: {ex}");
-
-                throw;
-            }
-        }*/
-
-
-        public async Task<bool> AddToCartAsync(int productId, int quantity)
-        {
-            try
-            {
-                var buyerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var product = await _productRepo.GetSingleByAsync(x => x.Id == productId);
-
-                
-
-                if (product == null)
-                {
-                    throw new Exception("Product not found");
-                }
-
-                if (quantity <= 0)
-                {
-                    throw new ArgumentException("Invalid quantity.");
-                }
-
-                var cart = await _cartRepo.GetSingleByAsync(c => c.Buyer.UserId == buyerId, include: q => q.Include(c => c.CartItems) );
-
-                if (cart == null)
-                {
-                    var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == buyerId);
-                    if (buyer == null)
-                    {
-                        throw new Exception("Buyer not found");
-                    }
-
-                    cart = new Cart { BuyerId = buyer.Id, Buyer = buyer };
-                    await _cartRepo.AddAsync(cart);
-                    await _cartRepo.SaveAsync();
-                }
-
-                if (cart.CartItems == null)
-                {
-                    cart.CartItems = new List<CartItem>();
-                }
-
-                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-
-                if (cartItem != null)
-                {
-                    cartItem.Quantity += quantity;
-                }
-                else
-                {
-                    cartItem = new CartItem
-                    {
-                        ProductId = productId,
-                        Quantity = quantity
-                    };
-                    cart.CartItems.Add(cartItem);
-                }
-
-                await _cartRepo.UpdateAsync(cart);
-
-                _logger.LogInfo($"Added product with ID {productId} to cart of buyer with ID {buyerId}");
+                _logger.LogInfo($"Added product with ID {productId} to cart of buyer with ID {buyer.Id}");
 
                 return true;
             }
@@ -445,7 +318,67 @@ namespace Online_Marketplace.BLL.Implementation
             }
         }
 
+        public async Task<bool> CheckoutAsync(int cartId)
+        {
+            try
+            {
+                var cart = await _cartRepo.GetSingleByAsync(c => c.Id == cartId, include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product));
+
+                if (cart == null)
+                {
+                    throw new Exception("Cart not found");
+                }
+
+                if (cart.CartItems == null || !cart.CartItems.Any())
+                {
+                    throw new Exception("Cart is empty");
+                }
+
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
+
+                if (buyer == null)
+                {
+                    throw new Exception("Buyer not found");
+                }
+
+                var order = new Order
+                {
+                    BuyerId = buyer.Id,
+                    OrderDate = DateTime.UtcNow,
+                    OrderStatus = OrderStatus.Pending,
+                    TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
+                };
+
+                await _orderRepo.AddAsync(order);
+
+                var orderItems = cart.CartItems.Select(ci => new OrderItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    Price = ci.Product.Price,
+                    OrderId = order.Id
+                }).ToList();
+
+                await _orderItemRepo.AddRangeAsync(orderItems);
+
+                await _cartRepo.DeleteAsync(cart);
+
+                _logger.LogInfo($"Checked out cart with ID {cart.Id}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
+
+                throw;
+            }
 
 
+
+        }
+       
     }
 }

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 namespace Online_Marketplace.DAL.Entities
 {
 
+  
+
+
     public class Cart
     {
         public int Id { get; set; }
@@ -15,5 +18,6 @@ namespace Online_Marketplace.DAL.Entities
         public Buyer Buyer { get; set; }
         public ICollection<CartItem> CartItems { get; set; }
     }
+
 
 }

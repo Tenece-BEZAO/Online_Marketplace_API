@@ -77,13 +77,13 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-        [Authorize(Roles = "Buyer")]
+        /*[Authorize(Roles = "Buyer")]*/
         [HttpPost("add-to-cart")]
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
             try
             {
-                var result = await _productService.AddToCartAsync(productId, quantity);
+                var result = await _productService.AddToCartAsync( productId, quantity);
 
                 if (result)
                 {

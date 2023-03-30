@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a0b79477-e8f0-49a9-a1e4-07aeeb2d7681",
-                            ConcurrencyStamp = "a8023809-1562-40ce-8aec-ca6eb8049e94",
+                            Id = "912e9f61-d234-4f31-89d9-929afed039fc",
+                            ConcurrencyStamp = "a76b3fec-45fd-4322-9fc2-05d22ee9509c",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "524f01c7-5f40-4e8e-96c0-2e4fbbca1bb8",
-                            ConcurrencyStamp = "a5aa1006-7a23-485c-b1aa-ddecdfd333e6",
+                            Id = "81d3e49b-f3e1-4d33-85e0-cad4997ee364",
+                            ConcurrencyStamp = "64874258-ae5c-4140-a954-bac23bca6229",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "d41c5f37-05b1-40d9-88ea-870b6dc630dc",
-                            ConcurrencyStamp = "57a09e38-37e2-47c0-ab8b-b2dba6558bf0",
+                            Id = "3386ec9e-6d4b-4372-819c-45f4f5e6ddb1",
+                            ConcurrencyStamp = "82a2b333-d1d7-47ea-8544-390a925da93c",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });

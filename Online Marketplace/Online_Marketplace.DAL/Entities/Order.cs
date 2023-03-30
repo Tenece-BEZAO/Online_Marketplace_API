@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Online_Marketplace.DAL.Entities.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -9,14 +10,15 @@ namespace Online_Marketplace.DAL.Entities
 {
     public class Order
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
+        public int BuyerId { get; set; }
+        public DateTime OrderDate { get; set; }
+       /* public OrderStatus OrderStatus { get; set; }*/
+        public decimal TotalAmount { get; set; }
 
-        public int TotalAmount { get; set; }
-
-        [ForeignKey(nameof(OrderItems))]
-        public int OrderItemsId { get; set; }
-        public OrderItems OrderItems { get; set; }
+        public virtual Buyer Buyer { get; set; }
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
     }
 
-    
+
 }
