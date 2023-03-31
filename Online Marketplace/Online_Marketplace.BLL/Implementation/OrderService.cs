@@ -2,23 +2,18 @@
 using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Online_Marketplace.BLL.Interface;
-using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.DAL.Entities;
+using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Online_Marketplace.DAL.Migrations;
+using System.Text;
 
 namespace Online_Marketplace.BLL.Implementation
 {
-    public class OrderService: IOrderService
+    public class OrderService : IOrderService
     {
 
         private readonly IMapper _mapper;
@@ -35,7 +30,7 @@ namespace Online_Marketplace.BLL.Implementation
 
 
 
-        public  OrderService (IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
+        public OrderService(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;

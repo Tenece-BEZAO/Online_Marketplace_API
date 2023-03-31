@@ -3,14 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
-    public partial class orders : Migration
-========
-    public partial class AdjustedprofileRelationship : Migration
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
+    public partial class firstmigrate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -260,28 +258,11 @@ namespace Online_Marketplace.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
-                name: "Carts",
-========
                 name: "AdminProfiles",
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
-                    BuyerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Carts_Buyers_BuyerId",
-                        column: x => x.BuyerId,
-                        principalTable: "Buyers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-========
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AdminIdentity = table.Column<int>(type: "int", nullable: false),
@@ -342,6 +323,25 @@ namespace Online_Marketplace.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Carts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BuyerId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Carts_Buyers_BuyerId",
+                        column: x => x.BuyerId,
+                        principalTable: "Buyers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SellerProfiles",
                 columns: table => new
                 {
@@ -365,7 +365,6 @@ namespace Online_Marketplace.DAL.Migrations
                         principalTable: "Sellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
                 });
 
             migrationBuilder.CreateTable(
@@ -374,36 +373,31 @@ namespace Online_Marketplace.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-========
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Order", x => x.Id);
                     table.ForeignKey(
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
-                        name: "FK_Order_Buyers_BuyerId",
-                        column: x => x.BuyerId,
-                        principalTable: "Buyers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-========
                         name: "FK_Order_BuyerProfiles_BuyerProfileId",
                         column: x => x.BuyerProfileId,
                         principalTable: "BuyerProfiles",
                         principalColumn: "Id");
                     table.ForeignKey(
+                        name: "FK_Order_Buyers_BuyerId",
+                        column: x => x.BuyerId,
+                        principalTable: "Buyers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Order_SellerProfiles_SellerProfileId",
                         column: x => x.SellerProfileId,
                         principalTable: "SellerProfiles",
                         principalColumn: "Id");
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
                 });
 
             migrationBuilder.CreateTable(
@@ -440,7 +434,6 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "CartItems",
                 columns: table => new
                 {
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductId = table.Column<int>(type: "int", nullable: false),
@@ -490,11 +483,44 @@ namespace Online_Marketplace.DAL.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-========
-                    { "370cbbb8-601b-4e62-8df5-ad9893237268", "f32a9d2d-205a-49af-942c-0ee01b323fc6", "Admin", "ADMIN" },
-                    { "71a260ce-e991-42fe-94bf-fc9450afae6c", "a7a50a4c-01eb-42db-a77f-b87fbdfcbf9c", "Buyer", "BUYER" },
-                    { "c599d117-7cd5-45b2-b85d-7ef6444d136d", "d711c67d-365c-4e00-b968-be179bf4540e", "Seller", "SELLER" }
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductReviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    BuyerId = table.Column<int>(type: "int", nullable: false),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductReviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductReviews_Buyers_BuyerId",
+                        column: x => x.BuyerId,
+                        principalTable: "Buyers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductReviews_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "187abf9a-3de0-4b0d-896f-93b4163758b3", "11b089a0-731b-41ec-af11-732342d21906", "Buyer", "BUYER" },
+                    { "64352825-3fb1-46fe-9277-99f9366757bd", "e0d4029d-fbab-4a33-bb4a-9bffa4d0ada2", "Seller", "SELLER" },
+                    { "9feac5d5-727c-4802-bde9-eb0832e061d8", "b35d6f09-5536-4178-9f53-6c4138dc5d43", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -567,7 +593,6 @@ namespace Online_Marketplace.DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
                 name: "IX_CartItems_CartId",
                 table: "CartItems",
                 column: "CartId");
@@ -588,15 +613,6 @@ namespace Online_Marketplace.DAL.Migrations
                 column: "BuyerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItem_OrderId",
-                table: "OrderItem",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OrderItem_ProductId",
-                table: "OrderItem",
-                column: "ProductId");
-========
                 name: "IX_Order_BuyerProfileId",
                 table: "Order",
                 column: "BuyerProfileId");
@@ -605,7 +621,26 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "IX_Order_SellerProfileId",
                 table: "Order",
                 column: "SellerProfileId");
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItem_OrderId",
+                table: "OrderItem",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItem_ProductId",
+                table: "OrderItem",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductReviews_BuyerId",
+                table: "ProductReviews",
+                column: "BuyerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductReviews_ProductId",
+                table: "ProductReviews",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
@@ -650,11 +685,16 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
                 name: "CartItems");
 
             migrationBuilder.DropTable(
                 name: "OrderItem");
+
+            migrationBuilder.DropTable(
+                name: "ProductReviews");
+
+            migrationBuilder.DropTable(
+                name: "Admins");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -663,22 +703,10 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "Carts");
 
             migrationBuilder.DropTable(
-========
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
                 name: "Order");
 
             migrationBuilder.DropTable(
                 name: "Products");
-
-            migrationBuilder.DropTable(
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230330204015_orders.cs
-                name: "Buyers");
-========
-                name: "Admins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
->>>>>>>> 2265789ee8dff0232542af13b18eaafb21a0d842:Online Marketplace/Online_Marketplace.DAL/Migrations/20230328124813_AdjustedprofileRelationship.cs
 
             migrationBuilder.DropTable(
                 name: "BuyerProfiles");
