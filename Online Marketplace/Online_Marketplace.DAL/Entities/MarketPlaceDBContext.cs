@@ -36,11 +36,11 @@ namespace Online_Marketplace.DAL.Entities
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.NoAction);
 
-
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
             base.OnModelCreating(modelBuilder);
 
 
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            
         }
 
 
