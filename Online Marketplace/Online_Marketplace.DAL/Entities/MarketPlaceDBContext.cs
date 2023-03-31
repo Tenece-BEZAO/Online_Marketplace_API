@@ -17,6 +17,25 @@ namespace Online_Marketplace.DAL.Entities
             .Property(p => p.Price)
             .HasPrecision(18, 2);
 
+            modelBuilder.Entity<CartItem>()
+            .HasOne(ci => ci.Product)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<OrderItem>()
+            .HasOne(ci => ci.Product)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<ProductReviews>()
+            .HasOne(ci => ci.Product)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductId)
+            .OnDelete(DeleteBehavior.NoAction);
+
 
             base.OnModelCreating(modelBuilder);
 
@@ -29,5 +48,12 @@ namespace Online_Marketplace.DAL.Entities
         public DbSet<Seller> Sellers { get; set; }
         public DbSet<Buyer> Buyers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderItem> OrderItem { get; set; }
+        public DbSet<ProductReviews> ProductReviews { get; set; }
+
+
     }
 }
