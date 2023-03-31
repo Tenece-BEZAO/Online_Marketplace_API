@@ -2,13 +2,13 @@
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Interface
+namespace Online_Marketplace.BLL.Interface.IServices
 {
     public interface IUserServices
     {
         Task<User> RegisterUser(UserForRegistrationDto userForRegistration);
         void GetUserProfile();
         void UpdateUserProfile();
-        
+
     }
 }

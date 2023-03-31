@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
 
 namespace Online_Marketplace.Presentation.Controllers
@@ -26,6 +26,16 @@ namespace Online_Marketplace.Presentation.Controllers
             var response = await _sellerServices.RegisterSeller(sellerForRegistration);
 
             return Ok(response);
+
+        }
+
+
+
+        [HttpPost("createProfile")]
+        public async Task<IActionResult> CreateProfile([FromBody] SellerProfileDto sellerProfile)
+        {
+
+            return null;
 
         }
     }

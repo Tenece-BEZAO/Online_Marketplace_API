@@ -48,6 +48,9 @@ namespace Online_Marketplace.DAL.Entities
         public DbSet<Seller> Sellers { get; set; }
         public DbSet<Buyer> Buyers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<AdminProfile> AdminProfiles { get; set; }
+        public DbSet<SellerProfile> SellerProfiles { get; set; }
+        public DbSet<BuyerProfile> BuyerProfiles { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Order { get; set; }

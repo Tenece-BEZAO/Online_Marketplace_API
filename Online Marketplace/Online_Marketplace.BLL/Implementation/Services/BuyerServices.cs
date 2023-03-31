@@ -1,11 +1,11 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Identity;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Implementation
+namespace Online_Marketplace.BLL.Implementation.Services
 {
     public class BuyerServices : IBuyerServices
     {
@@ -14,7 +14,7 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly ILoggerManager _logger;
         private readonly IUserServices _userServices;
         private readonly UserManager<User> _userManager;
-        
+
 
 
         public BuyerServices(ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IUserServices userServices)
@@ -24,7 +24,7 @@ namespace Online_Marketplace.BLL.Implementation
             _userManager = userManager;
             _userServices = userServices;
             _buyerRepo = _unitOfWork.GetRepository<Buyer>();
-            
+
         }
 
 
@@ -53,14 +53,14 @@ namespace Online_Marketplace.BLL.Implementation
                     UserName = buyerForRegistration.UserName,
                     PhoneNumber = buyerForRegistration.PhoneNumber,
                     Email = buyerForRegistration.Email,
-                    Address= buyerForRegistration.Address,
+                    Address = buyerForRegistration.Address,
                     UserId = user.Id
 
                 };
 
                 var result = await _buyerRepo.AddAsync(buyer);
 
-                return ($"Registration Successful! You can now start buying products!");
+                return $"Registration Successful! You can now start buying products!";
             }
             catch (Exception ex)
             {

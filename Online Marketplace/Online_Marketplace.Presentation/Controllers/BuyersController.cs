@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
 
 namespace Online_Marketplace.Presentation.Controllers

@@ -1,11 +1,11 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Identity;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Implementation
+namespace Online_Marketplace.BLL.Implementation.Services
 {
     public class AdminServices : IAdminServices
     {
@@ -59,7 +59,7 @@ namespace Online_Marketplace.BLL.Implementation
 
                 var result = await _adminRepo.AddAsync(admin);
 
-                return ($"Registration Successful! You now have access as an administrator!");
+                return $"Registration Successful! You now have access as an administrator!";
             }
             catch (Exception ex)
             {

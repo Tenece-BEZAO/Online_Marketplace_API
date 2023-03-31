@@ -4,7 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Online_Marketplace.BLL.Implementation;
+using Online_Marketplace.BLL.Implementation.ProfileServices;
+using Online_Marketplace.BLL.Implementation.Services;
 using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IServices;
+using Online_Marketplace.BLL.Interface.IProfileServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger;
@@ -90,6 +94,7 @@ namespace Online_Marketplace.API.Extensions
             services.AddScoped<IBuyerServices, BuyerServices>();
             services.AddScoped<ISellerServices, SellerServices>();
             services.AddScoped<IProductService, ProductServices>();
+            services.AddScoped<IAdminProfileServices, AdminProfileServices>(); 
             services.AddScoped<IOrderService , OrderService >();
 
         }
