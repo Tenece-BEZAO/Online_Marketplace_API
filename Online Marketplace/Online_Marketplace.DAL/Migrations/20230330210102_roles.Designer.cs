@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Marketplace.DAL.Entities;
 
@@ -11,9 +12,11 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    partial class MarketPlaceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230330210102_roles")]
+    partial class roles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "94994e21-0bbf-43c8-90eb-5c0a7a0d5727",
-                            ConcurrencyStamp = "7349b9a3-803b-4154-8868-13d74cda7eb6",
+                            Id = "09b6d656-ab59-43a6-bf71-a3d37e2c2ce6",
+                            ConcurrencyStamp = "81ac6f0d-a8d9-4f56-851b-31a4176b7190",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "3f56dd99-265a-4ef9-9aab-af39eeb95173",
-                            ConcurrencyStamp = "1d4e299f-ae55-43e6-b528-13081d596ac8",
+                            Id = "26866c1f-96fc-4e09-945a-5b8127c9d501",
+                            ConcurrencyStamp = "2626dae5-3ecc-4c86-9c95-c979288a8fda",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "ff8e0c96-6c14-434c-8584-fc9151e42e57",
-                            ConcurrencyStamp = "5dd534f7-7691-4343-8e10-d95f81e69647",
+                            Id = "aa0c1a71-b7c9-46fa-8c27-6af984b7ecc0",
+                            ConcurrencyStamp = "360fcc59-4861-4ac2-a350-bd6257e9778f",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -506,39 +509,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.ProductReviews", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductReviews");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -692,25 +662,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired();
 
                     b.Navigation("Seller");
-                });
-
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.ProductReviews", b =>
-                {
-                    b.HasOne("Online_Marketplace.DAL.Entities.Models.Buyer", "Buyer")
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Online_Marketplace.DAL.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Buyer");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.Cart", b =>

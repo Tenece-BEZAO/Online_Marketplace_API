@@ -10,7 +10,7 @@ namespace Online_Marketplace.Presentation.Controllers
 {
    
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("marketplace/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -59,8 +59,8 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
         [HttpGet("All-Products")]
-        [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductCreateDto>>> GetProducts()
         {
             try
@@ -77,7 +77,7 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
-        /*[Authorize(Roles = "Buyer")]*/
+        [Authorize(Roles = "Buyer")]
         [HttpPost("add-to-cart")]
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
@@ -150,7 +150,46 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
+        [Authorize(Roles = "Buyer")]
+        [HttpPost("checkout/{cartId:int}")]
+        public async Task<IActionResult> Checkout(int cartId)
+        {
+            try
+            {
+                var result = await _productService.CheckoutAsync(cartId);
 
+                if (result)
+                {
+                    return Ok("Cart checked out successfully");
+                }
+                else
+                {
+                    return BadRequest("Error occurred while checking out cart");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
+
+                return StatusCode(500, "An error occurred while checking out cart");
+            }
+        }
+
+        [Authorize(Roles = "Buyer")]
+        [HttpPost("Add-Reviews") ]
+        public async Task<IActionResult> AddReview(ReviewDto reviewDto)
+        {
+            try
+            {
+                var result = await _productService.AddReview(reviewDto);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     }
 

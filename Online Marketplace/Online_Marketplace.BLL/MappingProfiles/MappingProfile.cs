@@ -13,6 +13,15 @@ namespace Online_Marketplace.BLL.MappingProfiles
             CreateMap<ProductCreateDto, Product>();
             CreateMap<Product, ProductCreateDto>();
 
+            CreateMap<ProductReviews, ReviewDto>();
+            CreateMap<ReviewDto, ProductReviews>();
+
+
+            CreateMap<Order, OrderDto>();
+            CreateMap<OrderDto, Order>();
+
+            CreateMap<OrderItem, OrderItemDto>();
+
         }
     }
 }

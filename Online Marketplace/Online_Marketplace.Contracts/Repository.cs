@@ -236,11 +236,15 @@ public class Repository<T> : IRepository<T> where T : class
         }
     }
 
-    public virtual async Task<IEnumerable<T>> GetAllAsync(Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
     {
         try
         {
             IQueryable<T> query = ConstructQuery(orderBy, include);
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
             return await query.ToListAsync();
         }
         catch (Exception ex)
@@ -248,6 +252,7 @@ public class Repository<T> : IRepository<T> where T : class
             throw new Exception(ex.Message);
         }
     }
+
 
     public virtual IEnumerable<T> GetBy(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, int? skip = null, int? take = null, params string[] includeProperties)
     {

@@ -9,7 +9,7 @@ using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 using System.Security.Claims;
-
+using System.Text;
 
 namespace Online_Marketplace.BLL.Implementation
 {
@@ -24,6 +24,9 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly IRepository<Buyer> _buyerRepo;
         private readonly IRepository<Seller> _sellerRepo;
         private readonly IRepository<Cart> _cartRepo;
+        private readonly IRepository<Order> _orderRepo;
+        private readonly IRepository<OrderItem> _orderitemRepo;
+        private readonly IRepository<ProductReviews> _productreivewRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
@@ -45,6 +48,9 @@ namespace Online_Marketplace.BLL.Implementation
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
             _cartRepo = _unitOfWork.GetRepository<Cart>();
             _buyerRepo = _unitOfWork.GetRepository<Buyer>();
+            _orderRepo = _unitOfWork.GetRepository<Order>();
+            _orderitemRepo = _unitOfWork.GetRepository<OrderItem>();
+            _productreivewRepo = unitOfWork.GetRepository<ProductReviews>();
 
         }
 
@@ -81,14 +87,21 @@ namespace Online_Marketplace.BLL.Implementation
 
                 return product;
             }
+
             catch (Exception ex)
             {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order history:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
-                _logger.LogError($"Something went wrong in the {nameof(CreateProduct)} service method {ex}");
-
+                _logger.LogError(sb.ToString());
 
                 throw;
             }
+        
         }
 
 
@@ -322,7 +335,10 @@ namespace Online_Marketplace.BLL.Implementation
         {
             try
             {
-                var cart = await _cartRepo.GetSingleByAsync(c => c.Id == cartId, include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product));
+                var cart = await _cartRepo.GetSingleByAsync(
+                    c => c.Id == cartId,
+                    include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
+                );
 
                 if (cart == null)
                 {
@@ -337,7 +353,7 @@ namespace Online_Marketplace.BLL.Implementation
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
-
+               
                 if (buyer == null)
                 {
                     throw new Exception("Buyer not found");
@@ -346,8 +362,9 @@ namespace Online_Marketplace.BLL.Implementation
                 var order = new Order
                 {
                     BuyerId = buyer.Id,
+                    
                     OrderDate = DateTime.UtcNow,
-                    OrderStatus = OrderStatus.Pending,
+                   /* OrderStatus = OrderStatus.Pending,*/
                     TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
                 };
 
@@ -361,7 +378,7 @@ namespace Online_Marketplace.BLL.Implementation
                     OrderId = order.Id
                 }).ToList();
 
-                await _orderItemRepo.AddRangeAsync(orderItems);
+                await _orderitemRepo.AddRangeAsync(orderItems);
 
                 await _cartRepo.DeleteAsync(cart);
 
@@ -376,9 +393,34 @@ namespace Online_Marketplace.BLL.Implementation
                 throw;
             }
 
-
-
         }
-       
+
+
+        public async Task<string> AddReview(ReviewDto reviewDto)
+        {
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
+
+            var order = await _orderitemRepo.GetSingleByAsync(c => c.ProductId == reviewDto.ProductId && c.Order.BuyerId == buyer.Id,
+                include: oi => oi.Include(oi => oi.Order));
+
+            if (order == null)
+            {
+                _logger.LogError("Order not found");
+                return "Order not found";
+            }
+
+            var review = _mapper.Map<ProductReviews>(reviewDto);
+            review.BuyerId = buyer.Id;
+            review.DateCreated = DateTime.UtcNow;
+
+            await _productreivewRepo.AddAsync(review);
+
+            _logger.LogInfo($"Added review with ID {review.Id}");
+
+            return "Review added successfully";
+        }
+
     }
 }

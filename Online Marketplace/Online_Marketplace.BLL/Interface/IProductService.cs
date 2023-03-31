@@ -15,5 +15,8 @@ namespace Online_Marketplace.BLL.Interface
         public Task<string> DeleteProduct(int productId);
 
         public Task<List<ProductCreateDto>> GetSellerProducts();
+        public Task<bool> CheckoutAsync(int cartId);
+
+        public Task<string> AddReview(ReviewDto reviewDto);
     }
 }
