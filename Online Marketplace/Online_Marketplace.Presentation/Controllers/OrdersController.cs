@@ -85,6 +85,29 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         }
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> GetOrderStatus(int id)
+        {
+            try
+            {
+                var orderStatuses = await _orderService.GetOrderStatusAsync(id);
+
+                return Ok(orderStatuses);
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order status:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                return StatusCode(500, "An error occurred while getting order status. Please try again later.");
+            }
+        }
 
 
 

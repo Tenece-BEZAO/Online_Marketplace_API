@@ -149,7 +149,9 @@ namespace Online_Marketplace.BLL.Implementation
                 {
                     ProductName = oi.Product.Name,
                     Quantity = oi.Quantity,
-                    Status = oi.Order.OrderStatus.ToString()
+                    Price = oi.Price,
+                    Status = oi.Order.OrderStatus.ToString(),
+
                 }).ToList();
 
                 return orderStatuses;

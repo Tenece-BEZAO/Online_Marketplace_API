@@ -12,6 +12,7 @@ namespace Online_Marketplace.BLL.Interface
         public Task<List<OrderDto>> GetOrderHistoryAsync();
         public Task<List<OrderDto>> GetSellerOrderHistoryAsync();
 
+        public Task<List<OrderStatusDto>> GetOrderStatusAsync(int orderId);
 
 
     }
