@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
+using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 using System.Security.Claims;
@@ -364,7 +365,7 @@ namespace Online_Marketplace.BLL.Implementation
                     BuyerId = buyer.Id,
                     
                     OrderDate = DateTime.UtcNow,
-                   /* OrderStatus = OrderStatus.Pending,*/
+                    OrderStatus = OrderStatus.Pending,
                     TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
                 };
 

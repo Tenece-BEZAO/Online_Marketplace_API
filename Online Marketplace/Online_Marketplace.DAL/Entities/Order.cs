@@ -1,4 +1,5 @@
 ﻿using Online_Marketplace.DAL.Entities.Models;
+using Online_Marketplace.DAL.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,7 +14,7 @@ namespace Online_Marketplace.DAL.Entities
         public int Id { get; set; }
         public int BuyerId { get; set; }
         public DateTime OrderDate { get; set; }
-       /* public OrderStatus OrderStatus { get; set; }*/
+        public OrderStatus OrderStatus { get; set; }
         public decimal TotalAmount { get; set; }
 
         public virtual Buyer Buyer { get; set; }

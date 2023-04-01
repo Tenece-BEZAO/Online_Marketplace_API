@@ -34,7 +34,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         [Authorize(Roles = "Buyer")]
-        [HttpGet ("view-order-history")]
+        [HttpGet ("buyer-order-history")]
         public async Task<IActionResult> BuyerOrderHistory() {
 
         
@@ -56,7 +56,36 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         }
- 
+
+
+        [Authorize(Roles = "Seller")]
+        [HttpGet("seller-view-orders")]
+
+
+        
+        public async Task<IActionResult> SellerOrderHistory()
+        {
+
+
+
+            try
+            {
+                var orders = await _orderService.GetSellerOrderHistoryAsync();
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Something went wrong in the {nameof(SellerOrderHistory)} controller action {ex}");
+
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+
+
+        }
+
 
 
 
