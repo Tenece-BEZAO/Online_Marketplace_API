@@ -34,7 +34,7 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        private User? _user;
+
 
 
         public ProductServices(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
@@ -102,7 +102,7 @@ namespace Online_Marketplace.BLL.Implementation
 
                 throw;
             }
-        
+
         }
 
 
@@ -200,11 +200,11 @@ namespace Online_Marketplace.BLL.Implementation
 
             Seller seller = await _sellerRepo.GetSingleByAsync(x => x.UserId == userId);
 
-            IEnumerable<Product> sellerPruducts  = await _productRepo.GetByAsync(p => p.SellerId == seller.Id);
+            IEnumerable<Product> sellerPruducts = await _productRepo.GetByAsync(p => p.SellerId == seller.Id);
 
 
-              return   _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
-           
+            return _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
+
         }
 
 
@@ -260,7 +260,7 @@ namespace Online_Marketplace.BLL.Implementation
 
 
 
-      
+
 
 
         public async Task<bool> AddToCartAsync(int productId, int quantity)
@@ -293,8 +293,8 @@ namespace Online_Marketplace.BLL.Implementation
                 if (cart == null)
                 {
                     cart = new Cart { BuyerId = buyer.Id };
-                    await _cartRepo.AddAsync(cart); 
-                   
+                    await _cartRepo.AddAsync(cart);
+
                 }
 
                 if (cart.CartItems == null)
@@ -354,7 +354,7 @@ namespace Online_Marketplace.BLL.Implementation
                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
-               
+
                 if (buyer == null)
                 {
                     throw new Exception("Buyer not found");
@@ -363,7 +363,7 @@ namespace Online_Marketplace.BLL.Implementation
                 var order = new Order
                 {
                     BuyerId = buyer.Id,
-                    
+
                     OrderDate = DateTime.UtcNow,
                     OrderStatus = OrderStatus.Pending,
                     TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)

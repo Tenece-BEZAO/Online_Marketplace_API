@@ -109,6 +109,32 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
+        [Authorize(Roles = "Seller")]
+        [HttpGet("{orderId}/receipt")]
+      public async Task<FileResult> GenerateReceiptAsync(int orderId)
+
+        {
+            try
+            {
+                var receipt = await _orderService.GenerateReceiptAsync( orderId);
+
+                // Return the receipt as a file
+                return File(receipt, "application/pdf", $"receipt_{orderId}.pdf");
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while generating the receipt:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
+            }
+        }
 
 
 

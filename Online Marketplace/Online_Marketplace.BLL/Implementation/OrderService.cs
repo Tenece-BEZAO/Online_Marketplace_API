@@ -3,6 +3,7 @@ using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Online_Marketplace.BLL.Extension;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
@@ -174,7 +175,103 @@ namespace Online_Marketplace.BLL.Implementation
         }
 
 
+/*
+    public async Task<byte[]> GenerateReceiptAsync(int orderId)
+    {
+        try
+        {
+            var sellerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+            var seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == sellerId);
+
+            var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id),
+                include: o => o.Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product));
+
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+
+            var receiptDto = _mapper.Map<ReceiptDto>(order);
+
+            receiptDto.SellerName = seller.Name;
+            receiptDto.SellerEmail = seller.Email;
+
+            receiptDto.OrderItems = _mapper.Map<List<OrderItemDto>>(order.OrderItems.Where(oi => oi.Product.SellerId == seller.Id).ToList());
+
+            var pdf = _pdfService.GeneratePdfFromHtml(_htmlService.GetHtmlString(receiptDto));
+
+            return pdf;
+        }
+        catch (Exception ex)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("An error occurred while generating receipt:");
+            sb.AppendLine(ex.Message);
+            sb.AppendLine(ex.StackTrace);
+            sb.AppendLine("Inner exception:");
+            sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+            _logger.LogError(sb.ToString());
+
+            throw;
+        }
+    }
+*/
+
+
+        public async Task<byte[]> GenerateReceiptAsync( int orderId)
+        {
+
+            var sellerid = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerid );
+
+
+            if (seller == null)
+            {
+                throw new Exception("Seller not found");
+            }
+
+            var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id ),
+                include: o => o.Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product).Include(o => o.Buyer));
+
+            if (order == null)
+            {
+                throw new Exception("Order not found");
+            }
+
+            var receipt = new ReceiptDto
+            {
+                OrderId = order.Id,
+                OrderDate = order.OrderDate,
+                BuyerName = order.Buyer.FirstName ,
+                BuyerEmail = order.Buyer.Email,
+                TotalAmount = order.TotalAmount,
+                Items = order.OrderItems.Select(oi => new ReceiptItemDto
+                {
+                    ProductName = oi.Product.Name,
+                    Quantity = oi.Quantity,
+                    Price = oi.Price
+                }).ToList()
+            };
+
+            // Generate the receipt
+            var receiptGenerator = new ReceiptGenerator();
+            byte[] receiptBytes;
+            using (var receiptStream = receiptGenerator.GenerateReceipt(receipt))
+            {
+                // Convert the stream into a byte array
+                using (var memoryStream = new MemoryStream())
+                {
+                    await receiptStream.CopyToAsync(memoryStream);
+                    receiptBytes = memoryStream.ToArray();
+                }
+            }
+
+            return receiptBytes;
+        }
 
 
     }
