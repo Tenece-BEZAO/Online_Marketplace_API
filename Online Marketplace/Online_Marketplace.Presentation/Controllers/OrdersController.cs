@@ -34,7 +34,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         [Authorize(Roles = "Buyer")]
-        [HttpGet ("view-order-history")]
+        [HttpGet ("buyer-order-history")]
         public async Task<IActionResult> BuyerOrderHistory() {
 
         
@@ -56,7 +56,59 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         }
- 
+
+
+        [Authorize(Roles = "Seller")]
+        [HttpGet("seller-view-orders")]
+
+
+        
+        public async Task<IActionResult> SellerOrderHistory()
+        {
+
+
+
+            try
+            {
+                var orders = await _orderService.GetSellerOrderHistoryAsync();
+
+                return Ok(orders);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Something went wrong in the {nameof(SellerOrderHistory)} controller action {ex}");
+
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+
+
+        }
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> GetOrderStatus(int id)
+        {
+            try
+            {
+                var orderStatuses = await _orderService.GetOrderStatusAsync(id);
+
+                return Ok(orderStatuses);
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order status:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                return StatusCode(500, "An error occurred while getting order status. Please try again later.");
+            }
+        }
+
 
 
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Marketplace.DAL.Entities;
 
@@ -11,9 +12,11 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    partial class MarketPlaceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230331160318_rolesconfig")]
+    partial class rolesconfig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9e988f7e-7c54-4da1-9926-9d0a2c8885f8",
-                            ConcurrencyStamp = "d01b06d0-f820-4ebe-b489-eeaf09073321",
+                            Id = "778a82c1-65b4-4631-af8e-43ce5f87fdbc",
+                            ConcurrencyStamp = "6f4a6f40-8d2d-4991-b2ba-19560f15f079",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "141936a7-9d6f-48ab-bd2b-ec0214b5831c",
-                            ConcurrencyStamp = "c0ef1614-0558-456f-8d2a-0e1e864af2de",
+                            Id = "74ae491d-febd-4a0b-a67a-dc91ee00c05b",
+                            ConcurrencyStamp = "c963aeb2-afb7-4abb-8ded-781f2cf80103",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "8ce67a04-ad40-4803-aded-c7653b6e90c9",
-                            ConcurrencyStamp = "5a026c9b-9bfc-4406-b3f2-16b117fec3e1",
+                            Id = "6e059a32-2ab6-4580-8beb-dac6a7d34090",
+                            ConcurrencyStamp = "a67a1ef4-ad75-4347-9f3e-77f9c9c529c3",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -520,9 +523,6 @@ namespace Online_Marketplace.DAL.Migrations
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderStatus")
-                        .HasColumnType("int");
 
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");

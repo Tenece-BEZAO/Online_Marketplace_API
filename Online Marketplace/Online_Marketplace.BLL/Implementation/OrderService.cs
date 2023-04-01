@@ -74,13 +74,109 @@ namespace Online_Marketplace.BLL.Implementation
 
                 throw;
             }
+
+        }
+      
+            public async Task<List<OrderDto>> GetSellerOrderHistoryAsync()
+            {
+                var sellerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerId);
+
+
+                var sellerProducts = await _productRepo.GetAllAsync(p => p.SellerId == seller.Id);
+
+
+
+                var productIds = sellerProducts.Select(p => p.Id);
+
+                var orderItems = await _orderitemRepo.GetAllAsync(
+               oi => productIds.Contains(oi.ProductId),
+               include: oi => oi.Include(oi => oi.Order).ThenInclude(o => o.Buyer)
+           );
+
+
+
+                var orders = orderItems.GroupBy(oi => oi.OrderId).Select(group =>
+                {
+                    var order = group.First().Order;
+
+                    var orderDto = _mapper.Map<OrderDto>(order);
+                    orderDto.Total = group.Sum(oi => oi.Price * oi.Quantity);
+                    orderDto.OrderItems = _mapper.Map<List<OrderItemDto>>(group);
+
+                    return orderDto;
+                });
+
+                return orders.ToList();
+            }
+        /*  public async Task<List<OrderStatusDto>> GetOrderStatusAsync(int orderid)
+          {
+
+              var buyerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+              var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == buyerId);
+
+
+
+              var order = await _orderitemRepo.GetSingleByAsync(c => c.OrderId == orderid && c.Order.BuyerId == buyer.Id,
+                 include: oi => oi.Include(oi =>oi.Product).Include(o=>o.Order ));
+
+
+
+
+          }*/
+
+
+
+        public async Task<List<OrderStatusDto>> GetOrderStatusAsync(int orderId)
+        {
+
+            try
+            {
+                var buyerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == buyerId);
+
+                var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.BuyerId == buyer.Id,
+                    include: o => o.Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product));
+
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
+
+                var orderStatuses = order.OrderItems.Select(oi => new OrderStatusDto
+                {
+                    ProductName = oi.Product.Name,
+                    Quantity = oi.Quantity,
+                    Price = oi.Price,
+                    Status = oi.Order.OrderStatus.ToString(),
+
+                }).ToList();
+
+                return orderStatuses;
+
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order history:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
+            }
+
         }
 
 
 
+
+
     }
-
-
-
 
 }
