@@ -229,9 +229,6 @@ namespace Online_Marketplace.BLL.Implementation
             var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerid );
 
 
-
-        
-
             if (seller == null)
             {
                 throw new Exception("Seller not found");
@@ -262,19 +259,19 @@ namespace Online_Marketplace.BLL.Implementation
 
             // Generate the receipt
             var receiptGenerator = new ReceiptGenerator();
-            var receiptStream = receiptGenerator.GenerateReceipt(receipt);
-
-            // Convert the stream into a byte array
             byte[] receiptBytes;
-            using (var memoryStream = new MemoryStream())
+            using (var receiptStream = receiptGenerator.GenerateReceipt(receipt))
             {
-                await receiptStream.CopyToAsync(memoryStream);
-                receiptBytes = memoryStream.ToArray();
+                // Convert the stream into a byte array
+                using (var memoryStream = new MemoryStream())
+                {
+                    await receiptStream.CopyToAsync(memoryStream);
+                    receiptBytes = memoryStream.ToArray();
+                }
             }
 
             return receiptBytes;
         }
-
 
 
     }

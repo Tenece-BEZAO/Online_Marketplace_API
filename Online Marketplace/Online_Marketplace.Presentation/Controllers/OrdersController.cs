@@ -110,8 +110,9 @@ namespace Online_Marketplace.Presentation.Controllers
         }
 
         [Authorize(Roles = "Seller")]
-        [HttpGet("orders/{orderId}/receipt")]
-        public async Task<IActionResult> GenerateReceipt( int orderId)
+        [HttpGet("{orderId}/receipt")]
+      public async Task<FileResult> GenerateReceiptAsync(int orderId)
+
         {
             try
             {
