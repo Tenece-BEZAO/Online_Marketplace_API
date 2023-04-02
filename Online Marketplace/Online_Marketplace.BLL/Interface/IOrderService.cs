@@ -15,5 +15,7 @@ namespace Online_Marketplace.BLL.Interface
         public Task<List<OrderStatusDto>> GetOrderStatusAsync(int orderId);
 
         public Task<byte[]> GenerateReceiptAsync(int orderId);
+
+        public Task UpdateOrderStatusAsync(UpdateOrderStatusDto updateOrderStatusDto);
     }
 }
