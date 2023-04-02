@@ -135,8 +135,20 @@ namespace Online_Marketplace.Presentation.Controllers
                 throw;
             }
         }
-
-
+        [Authorize(Roles = "Seller")]
+        [HttpPost("updateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatus(UpdateOrderStatusDto updateOrderStatusDto)
+        {
+            try
+            {
+                await _orderService.UpdateOrderStatusAsync(updateOrderStatusDto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

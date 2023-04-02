@@ -7,6 +7,7 @@ using Online_Marketplace.BLL.Extension;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
+using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 using System.Security.Claims;
@@ -77,9 +78,10 @@ namespace Online_Marketplace.BLL.Implementation
             }
 
         }
-      
-            public async Task<List<OrderDto>> GetSellerOrderHistoryAsync()
-            {
+
+        public async Task<List<OrderDto>> GetSellerOrderHistoryAsync()
+        {
+            try {
                 var sellerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerId);
@@ -111,22 +113,22 @@ namespace Online_Marketplace.BLL.Implementation
 
                 return orders.ToList();
             }
-        /*  public async Task<List<OrderStatusDto>> GetOrderStatusAsync(int orderid)
-          {
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order history:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
-              var buyerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                _logger.LogError(sb.ToString());
 
-              var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == buyerId);
+                throw;
+            }
 
-
-
-              var order = await _orderitemRepo.GetSingleByAsync(c => c.OrderId == orderid && c.Order.BuyerId == buyer.Id,
-                 include: oi => oi.Include(oi =>oi.Product).Include(o=>o.Order ));
-
-
-
-
-          }*/
+        }
+      
 
 
 
@@ -175,58 +177,14 @@ namespace Online_Marketplace.BLL.Implementation
         }
 
 
-/*
-    public async Task<byte[]> GenerateReceiptAsync(int orderId)
-    {
-        try
-        {
-            var sellerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == sellerId);
-
-            var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id),
-                include: o => o.Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product));
-
-            if (order == null)
-            {
-                throw new Exception("Order not found");
-            }
-
-            var receiptDto = _mapper.Map<ReceiptDto>(order);
-
-            receiptDto.SellerName = seller.Name;
-            receiptDto.SellerEmail = seller.Email;
-
-            receiptDto.OrderItems = _mapper.Map<List<OrderItemDto>>(order.OrderItems.Where(oi => oi.Product.SellerId == seller.Id).ToList());
-
-            var pdf = _pdfService.GeneratePdfFromHtml(_htmlService.GetHtmlString(receiptDto));
-
-            return pdf;
-        }
-        catch (Exception ex)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("An error occurred while generating receipt:");
-            sb.AppendLine(ex.Message);
-            sb.AppendLine(ex.StackTrace);
-            sb.AppendLine("Inner exception:");
-            sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-            _logger.LogError(sb.ToString());
-
-            throw;
-        }
-    }
-*/
-
-
-        public async Task<byte[]> GenerateReceiptAsync( int orderId)
+        public async Task<byte[]> GenerateReceiptAsync(int orderId)
         {
 
             var sellerid = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
-            var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerid );
+            var seller = await _sellerRepo.GetSingleByAsync(b => b.UserId == sellerid);
 
 
             if (seller == null)
@@ -234,7 +192,7 @@ namespace Online_Marketplace.BLL.Implementation
                 throw new Exception("Seller not found");
             }
 
-            var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id ),
+            var order = await _orderRepo.GetSingleByAsync(o => o.Id == orderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id),
                 include: o => o.Include(oi => oi.OrderItems).ThenInclude(oi => oi.Product).Include(o => o.Buyer));
 
             if (order == null)
@@ -246,7 +204,7 @@ namespace Online_Marketplace.BLL.Implementation
             {
                 OrderId = order.Id,
                 OrderDate = order.OrderDate,
-                BuyerName = order.Buyer.FirstName ,
+                BuyerName = order.Buyer.FirstName,
                 BuyerEmail = order.Buyer.Email,
                 TotalAmount = order.TotalAmount,
                 Items = order.OrderItems.Select(oi => new ReceiptItemDto
@@ -257,12 +215,11 @@ namespace Online_Marketplace.BLL.Implementation
                 }).ToList()
             };
 
-            // Generate the receipt
             var receiptGenerator = new ReceiptGenerator();
             byte[] receiptBytes;
             using (var receiptStream = receiptGenerator.GenerateReceipt(receipt))
             {
-                // Convert the stream into a byte array
+                
                 using (var memoryStream = new MemoryStream())
                 {
                     await receiptStream.CopyToAsync(memoryStream);
@@ -274,6 +231,42 @@ namespace Online_Marketplace.BLL.Implementation
         }
 
 
-    }
 
+        public async Task UpdateOrderStatusAsync(UpdateOrderStatusDto updateOrderStatusDto)
+        {
+            try
+            {
+                var sellerId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == sellerId);
+
+                var order = await _orderRepo.GetSingleByAsync(o => o.Id == updateOrderStatusDto.OrderId && o.OrderItems.Any(oi => oi.Product.SellerId == seller.Id && oi.Product.Id == updateOrderStatusDto.ProductId));
+
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
+
+                var newStatus = Enum.Parse<OrderStatus>(updateOrderStatusDto.Status);
+                order.OrderStatus = newStatus;
+
+                await _orderRepo.UpdateAsync(order);
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while updating order status:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
+            }
+        }
+
+
+
+    }
 }

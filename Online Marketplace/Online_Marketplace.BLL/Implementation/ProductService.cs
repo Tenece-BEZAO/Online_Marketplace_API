@@ -92,7 +92,7 @@ namespace Online_Marketplace.BLL.Implementation
             catch (Exception ex)
             {
                 var sb = new StringBuilder();
-                sb.AppendLine("An error occurred while getting order history:");
+                sb.AppendLine("An error occurred while getting creating product:");
                 sb.AppendLine(ex.Message);
                 sb.AppendLine(ex.StackTrace);
                 sb.AppendLine("Inner exception:");
@@ -142,7 +142,15 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong in the {nameof(UpdateProduct)} service method {ex}");
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting updating product:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
                 throw;
             }
         }
@@ -179,7 +187,15 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong in the {nameof(DeleteProduct)} service method {ex}");
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while deleting product:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
                 throw;
             }
         }
@@ -191,19 +207,37 @@ namespace Online_Marketplace.BLL.Implementation
 
         public async Task<List<ProductCreateDto>> GetSellerProducts()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userId))
+            try
             {
-                throw new Exception("User not found");
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new Exception("User not found");
+                }
+
+                Seller seller = await _sellerRepo.GetSingleByAsync(x => x.UserId == userId);
+
+                IEnumerable<Product> sellerPruducts = await _productRepo.GetByAsync(p => p.SellerId == seller.Id);
+
+
+                return _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
+            }
+           
+              catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting seller products:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
             }
 
-            Seller seller = await _sellerRepo.GetSingleByAsync(x => x.UserId == userId);
-
-            IEnumerable<Product> sellerPruducts = await _productRepo.GetByAsync(p => p.SellerId == seller.Id);
-
-
-            return _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
 
         }
 
@@ -229,9 +263,14 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting order history:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
-                _logger.LogError($"Something went wrong in the {nameof(GetProducts)} service method {ex}");
-
+                _logger.LogError(sb.ToString());
 
                 throw;
             }
@@ -250,9 +289,14 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while getting retrieving products:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
-                _logger.LogError($"Something went wrong in the {nameof(ViewProducts)} service method {ex}");
-
+                _logger.LogError(sb.ToString());
 
                 throw;
             }
@@ -326,7 +370,14 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occurred while adding product with ID {productId} to cart: {ex}");
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while adding to cart:");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
 
                 throw;
             }
@@ -389,7 +440,14 @@ namespace Online_Marketplace.BLL.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while checking out :");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
 
                 throw;
             }
