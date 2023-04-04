@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230401012359_ordermigrate")]
-    partial class ordermigrate
+    [Migration("20230403203033_newmigration")]
+    partial class newmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,29 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "35734ba7-2715-458e-add3-1877e2e0d7a6",
+                            ConcurrencyStamp = "310830fc-c300-4cea-b5a7-6163252b25f7",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "18107d84-8297-4b1e-90de-64cfab4139a4",
+                            ConcurrencyStamp = "82f1b510-03d4-4ad0-bce1-cc6ccfc9a65b",
+                            Name = "Seller",
+                            NormalizedName = "SELLER"
+                        },
+                        new
+                        {
+                            Id = "0ee2d214-22a8-4d1a-b8b8-89f840a7c1b5",
+                            ConcurrencyStamp = "b064e0e3-5cfb-4995-8673-6861a49dbcae",
+                            Name = "Buyer",
+                            NormalizedName = "BUYER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -504,11 +527,20 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentGateway")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransactionReference")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -3,6 +3,7 @@ using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Online_Marketplace.BLL.Extension;
 using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
@@ -10,6 +11,7 @@ using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
+using PayStack.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -17,7 +19,7 @@ namespace Online_Marketplace.BLL.Implementation
 {
     public class OrderService : IOrderService
     {
-
+        
         private readonly IMapper _mapper;
         private readonly IRepository<Product> _productRepo;
         private readonly IRepository<Buyer> _buyerRepo;
@@ -34,6 +36,7 @@ namespace Online_Marketplace.BLL.Implementation
 
         public OrderService(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
+
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -266,7 +269,26 @@ namespace Online_Marketplace.BLL.Implementation
             }
         }
 
+       
+
+      /*  public TransactionInitializeResponse MakePayment(PaymentDto paymentRequestDto)
+        {
+            string secret = (string)_configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
+            PayStackApi payStack = new(secret);
+            TransactionInitializeRequest initializeRequest = _mapper.Map<TransactionInitializeRequest>(paymentRequestDto);
+            var result = payStack.Transactions.Initialize(initializeRequest);
+            return result.Data.AuthorizationUrl;
+        }
 
 
+
+        public TransactionVerifyResponse VerifyPayment(string referenceCode)
+        {
+            string secret = (string)_configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
+            PayStackApi payStack = new(secret);
+            TransactionVerifyResponse result = payStack.Transactions.Verify(referenceCode);
+            return result;
+
+        }*/
     }
 }

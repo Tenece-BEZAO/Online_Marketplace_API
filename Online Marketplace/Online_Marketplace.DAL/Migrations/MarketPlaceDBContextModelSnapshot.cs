@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9e988f7e-7c54-4da1-9926-9d0a2c8885f8",
-                            ConcurrencyStamp = "d01b06d0-f820-4ebe-b489-eeaf09073321",
+                            Id = "35734ba7-2715-458e-add3-1877e2e0d7a6",
+                            ConcurrencyStamp = "310830fc-c300-4cea-b5a7-6163252b25f7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "141936a7-9d6f-48ab-bd2b-ec0214b5831c",
-                            ConcurrencyStamp = "c0ef1614-0558-456f-8d2a-0e1e864af2de",
+                            Id = "18107d84-8297-4b1e-90de-64cfab4139a4",
+                            ConcurrencyStamp = "82f1b510-03d4-4ad0-bce1-cc6ccfc9a65b",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "8ce67a04-ad40-4803-aded-c7653b6e90c9",
-                            ConcurrencyStamp = "5a026c9b-9bfc-4406-b3f2-16b117fec3e1",
+                            Id = "0ee2d214-22a8-4d1a-b8b8-89f840a7c1b5",
+                            ConcurrencyStamp = "b064e0e3-5cfb-4995-8673-6861a49dbcae",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -524,11 +524,20 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentGateway")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransactionReference")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

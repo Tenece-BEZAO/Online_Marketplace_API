@@ -18,5 +18,6 @@ namespace Online_Marketplace.BLL.Interface
         public Task<bool> CheckoutAsync(int cartId);
 
         public Task<string> AddReview(ReviewDto reviewDto);
+        public Task<bool> VerifyPaymentAndUpdateOrderStatus(string referenceCode);
     }
 }
