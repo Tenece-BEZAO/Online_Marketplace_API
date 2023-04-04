@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Implementation;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Implementation.MarketServices;
+using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
+using Online_Marketplace.Shared.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +30,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
             _orderService = orderService;
+
             _logger = logger;
 
         }
@@ -35,6 +38,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Buyer")]
         [HttpGet ("buyer-order-history")]
+       
         public async Task<IActionResult> BuyerOrderHistory() {
 
         
@@ -60,13 +64,8 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Seller")]
         [HttpGet("seller-view-orders")]
-
-
-        
         public async Task<IActionResult> SellerOrderHistory()
         {
-
-
 
             try
             {
@@ -86,6 +85,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
         }
         [HttpGet("{id}/status")]
+       
         public async Task<IActionResult> GetOrderStatus(int id)
         {
             try
@@ -99,7 +99,7 @@ namespace Online_Marketplace.Presentation.Controllers
                 var sb = new StringBuilder();
                 sb.AppendLine("An error occurred while getting order status:");
                 sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine(ex.StackTrace); 
                 sb.AppendLine("Inner exception:");
                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
@@ -109,9 +109,36 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
+        [Authorize(Roles = "Buyer")]
+        [HttpPost("checkout/{cartId:int}")]
+        
+        public async Task<IActionResult> Checkout(int cartId)
+        {
+            try
+            {
+                var result = await _orderService.CheckoutAsync (cartId);
+
+                if (result)
+                {
+                    return Ok("Cart checked out successfully");
+                }
+                else
+                {
+                    return BadRequest("Error occurred while checking out cart");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
+
+                return StatusCode(500, "An error occurred while checking out cart");
+            }
+        }
+
+
         [Authorize(Roles = "Seller")]
         [HttpGet("{orderId}/receipt")]
-      public async Task<FileResult> GenerateReceiptAsync(int orderId)
+        public async Task<FileResult> GenerateReceiptAsync(int orderId)
 
         {
             try

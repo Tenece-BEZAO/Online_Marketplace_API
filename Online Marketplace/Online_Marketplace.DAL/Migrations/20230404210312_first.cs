@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class payment : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,30 +52,6 @@ namespace Online_Marketplace.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ShoppingCart",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShoppingCart", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Wishlist",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Wishlist", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -308,18 +284,6 @@ namespace Online_Marketplace.DAL.Migrations
                         principalTable: "Buyers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BuyerProfiles_ShoppingCart_ShoppingCartId",
-                        column: x => x.ShoppingCartId,
-                        principalTable: "ShoppingCart",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BuyerProfiles_Wishlist_WishlistId",
-                        column: x => x.WishlistId,
-                        principalTable: "Wishlist",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -377,9 +341,9 @@ namespace Online_Marketplace.DAL.Migrations
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Reference = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -499,7 +463,8 @@ namespace Online_Marketplace.DAL.Migrations
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ProductId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -515,6 +480,11 @@ namespace Online_Marketplace.DAL.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ProductReviews_Products_ProductId1",
+                        column: x => x.ProductId1,
+                        principalTable: "Products",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -522,9 +492,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "0f27544d-2481-40c0-8422-71c43d736efb", "c8e7c0e6-c0f8-4151-b75d-fafdb982922f", "Seller", "SELLER" },
-                    { "828cbbea-6de6-4647-aeb6-1b10a40c431b", "d529e69c-fe1d-4b6f-be77-21f26cfa3888", "Buyer", "BUYER" },
-                    { "c4254952-dd0c-4a59-bfdb-0f5e93cdfe44", "8ae30c09-52b5-4f50-8479-dc662c88da59", "Admin", "ADMIN" }
+                    { "654bc1a5-9aa4-45c5-bedd-b87414eae723", "e69ce4f0-4245-491d-a39f-759513c12dde", "Buyer", "BUYER" },
+                    { "b43f0d3a-f5ae-4953-a404-a4d9522af309", "2b86262a-5cb7-44e0-9fa4-e678d28265ef", "Admin", "ADMIN" },
+                    { "f898d596-833d-40f6-a427-df4bb1b5336d", "4bb24210-6d7b-4e57-8144-f7a7b8e4a953", "Seller", "SELLER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -582,16 +552,6 @@ namespace Online_Marketplace.DAL.Migrations
                 column: "BuyerIdentity");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BuyerProfiles_ShoppingCartId",
-                table: "BuyerProfiles",
-                column: "ShoppingCartId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BuyerProfiles_WishlistId",
-                table: "BuyerProfiles",
-                column: "WishlistId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Buyers_UserId",
                 table: "Buyers",
                 column: "UserId");
@@ -645,6 +605,11 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "IX_ProductReviews_ProductId",
                 table: "ProductReviews",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductReviews_ProductId1",
+                table: "ProductReviews",
+                column: "ProductId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
@@ -720,12 +685,6 @@ namespace Online_Marketplace.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Buyers");
-
-            migrationBuilder.DropTable(
-                name: "ShoppingCart");
-
-            migrationBuilder.DropTable(
-                name: "Wishlist");
 
             migrationBuilder.DropTable(
                 name: "Sellers");

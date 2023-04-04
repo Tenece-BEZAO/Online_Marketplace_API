@@ -4,17 +4,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
-using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using PayStack.Net;
 using System.Security.Claims;
 using System.Text;
 
-namespace Online_Marketplace.BLL.Implementation
+namespace Online_Marketplace.BLL.Implementation.MarketServices
 {
 
 
@@ -22,7 +20,6 @@ namespace Online_Marketplace.BLL.Implementation
 
     public class ProductServices : IProductService
     {
-        static IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IRepository<Product> _productRepo;
         private readonly IRepository<Buyer> _buyerRepo;
@@ -36,13 +33,9 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-
-
-
-        public ProductServices(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
+        public ProductServices( IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
-            _configuration = configuration;
+            
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -60,7 +53,7 @@ namespace Online_Marketplace.BLL.Implementation
 
 
 
-        public async Task<Product> CreateProduct(ProductCreateDto productDto)
+        public async Task<string> CreateProduct(ProductCreateDto productDto)
         {
             try
             {
@@ -89,7 +82,7 @@ namespace Online_Marketplace.BLL.Implementation
                 await _productRepo.AddAsync(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                return product;
+                return "product created successfully";
             }
 
             catch (Exception ex)
@@ -169,12 +162,17 @@ namespace Online_Marketplace.BLL.Implementation
                     throw new Exception("User not found");
                 }
 
-                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId);
+                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x=>x.Include(s=>s.Seller));
 
                 if (existingProduct == null)
                 {
                     throw new Exception("Product not found");
                 }
+
+
+              
+
+                var buyer = await _sellerRepo.GetSingleByAsync(b => b.UserId == userId);
 
 
 
@@ -204,10 +202,6 @@ namespace Online_Marketplace.BLL.Implementation
         }
 
 
-
-
-
-
         public async Task<List<ProductCreateDto>> GetSellerProducts()
         {
             try
@@ -226,8 +220,8 @@ namespace Online_Marketplace.BLL.Implementation
 
                 return _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
             }
-           
-              catch (Exception ex)
+
+            catch (Exception ex)
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("An error occurred while getting seller products:");
@@ -287,10 +281,11 @@ namespace Online_Marketplace.BLL.Implementation
         {
             try
             {
-                var products = await _productRepo.GetAllAsync();
+                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview ));
 
 
                 var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
+             
 
                 return productDtos;
             }
@@ -396,261 +391,8 @@ namespace Online_Marketplace.BLL.Implementation
             }
         }
 
-        /// <summary>
-        /// //
-        /// </summary>
-        /// <param name="cartId"></param>
-        /// <returns></returns>
-        /*public async Task<bool> CheckoutAsync(int cartId)
-        {
-            try
-            {
-                var cart = await _cartRepo.GetSingleByAsync(
-                    c => c.Id == cartId,
-                    include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
-                );
 
-                if (cart == null)
-                {
-                    throw new Exception("Cart not found");
-                }
 
-                if (cart.CartItems == null || !cart.CartItems.Any())
-                {
-                    throw new Exception("Cart is empty");
-                }
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
-
-                if (buyer == null)
-                {
-                    throw new Exception("Buyer not found");
-                }
-
-                var order = new Order
-                {
-                    BuyerId = buyer.Id,
-
-                    OrderDate = DateTime.UtcNow,
-                    OrderStatus = OrderStatus.Pending,
-                    TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
-                };
-
-                await _orderRepo.AddAsync(order);
-
-                var orderItems = cart.CartItems.Select(ci => new OrderItem
-                {
-                    ProductId = ci.ProductId,
-                    Quantity = ci.Quantity,
-                    Price = ci.Product.Price,
-                    OrderId = order.Id
-                }).ToList();
-
-                await _orderitemRepo.AddRangeAsync(orderItems);
-
-                await _cartRepo.DeleteAsync(cart);
-
-                _logger.LogInfo($"Checked out cart with ID {cart.Id}");
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("An error occurred while checking out :");
-                sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace);
-                sb.AppendLine("Inner exception:");
-                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-                _logger.LogError(sb.ToString());
-
-                throw;
-            }
-
-        }*/
-
-
-
-
-        public async Task<bool> CheckoutAsync(int cartId)
-        {
-            try
-            {
-                var cart = await _cartRepo.GetSingleByAsync(
-                    c => c.Id == cartId,
-                    include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
-                );
-
-                if (cart == null)
-                {
-                    throw new Exception("Cart not found");
-                }
-
-                if (cart.CartItems == null || !cart.CartItems.Any())
-                {
-                    throw new Exception("Cart is empty");
-                }
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
-
-                if (buyer == null)
-                {
-                    throw new Exception("Buyer not found");
-                }
-
-                var orderReference = GenerateOrderReference(); // generate a unique order reference
-
-                var order = new Order
-                {
-                    BuyerId = buyer.Id,
-                    Reference = orderReference, // save the order reference in the order entity
-                    OrderDate = DateTime.UtcNow,
-                    OrderStatus = OrderStatus.Pending,
-                    TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
-                };
-
-                await _orderRepo.AddAsync(order);
-
-                var orderItems = cart.CartItems.Select(ci => new OrderItem
-                {
-                    ProductId = ci.ProductId,
-                    Quantity = ci.Quantity,
-                    Price = ci.Product.Price,
-                    OrderId = order.Id
-                }).ToList();
-
-                await _orderitemRepo.AddRangeAsync(orderItems);
-
-                await _cartRepo.DeleteAsync(cart);
-
-                _logger.LogInfo($"Checked out cart with ID {cart.Id}");
-
-                // Initiate payment for the order
-                var paymentRequest = new PaymentRequestDto
-                {
-                    Amount = order.TotalAmount,
-                    Email = buyer.Email,
-                    Reference = Guid.NewGuid().ToString(),
-                    CallbackUrl = "https://localhost:7258/marketplace/Products/verifypayment"
-                };
-
-                var transaction = await MakePayment(paymentRequest);
-
-                // Update the order with the transaction details
-                order.TransactionReference = transaction.Data.Reference;
-                order.PaymentGateway = "paystack";
-                order.OrderStatus = OrderStatus.PendingPayment;
-
-                await _orderRepo.UpdateAsync(order);
-
-                _logger.LogInfo($"Payment initiated for order with ID {order.Id}");
-
-                var authorizationUrl = transaction.Data.AuthorizationUrl;
-                _httpContextAccessor.HttpContext.Response.Redirect(authorizationUrl);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("An error occurred while checking out :");
-                sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace);
-                sb.AppendLine("Inner exception:");
-                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-                _logger.LogError(sb.ToString());
-
-                throw;
-            }
-        }
-
-        public async Task<TransactionInitializeResponse> MakePayment(PaymentRequestDto paymentRequestDto)
-        {
-            string secret = (string)_configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
-
-            var paystackApi = new PayStackApi(secret);
-
-            var transactionInitializeRequest = new TransactionInitializeRequest
-            {
-                Email = paymentRequestDto.Email,
-                AmountInKobo = (int)(paymentRequestDto.Amount * 100),
-                Reference = paymentRequestDto.Reference,
-                CallbackUrl = paymentRequestDto.CallbackUrl
-            };
-
-            var transactionInitializeResponse = paystackApi.Transactions.Initialize(transactionInitializeRequest);
-
-            
-            var authorizationUrl = transactionInitializeResponse.Data.AuthorizationUrl;
-            _httpContextAccessor.HttpContext.Response.Redirect(authorizationUrl);
-
-            return transactionInitializeResponse;
-        }
-
-        public async Task<bool> VerifyPaymentAndUpdateOrderStatus(string referenceCode)
-        {
-            string secret = (string)_configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
-            PayStackApi payStack = new(secret);
-            TransactionVerifyResponse result = payStack.Transactions.Verify(referenceCode);
-
-            if (result.Status)
-            {
-                var orderReference = result.Data.Reference;
-                var order = await _orderRepo.GetSingleByAsync(o => o.Reference == orderReference);
-
-                if (order != null)
-                {
-                    // update order status and save changes
-                    order.OrderStatus = OrderStatus.Paid;
-                    await _orderRepo.UpdateAsync(order);
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
-        /* public async Task<TransactionInitializeResponse> MakePayment(PaymentRequestDto paymentRequestDto)
-         {
-             string secret = (string)_configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
-
-             var paystackApi = new PayStackApi(secret);
-
-             var transactionInitializeRequest = new TransactionInitializeRequest
-             {
-                 Email = paymentRequestDto.Email,
-                 AmountInKobo = (int)(paymentRequestDto.Amount * 100),
-                 Reference = paymentRequestDto.Reference,
-                 CallbackUrl = paymentRequestDto.CallbackUrl
-             };
-
-             var transactionInitializeResponse = paystackApi.Transactions.Initialize(transactionInitializeRequest);
-
-             return transactionInitializeResponse;
-         }*/
-
-
-
-
-
-
-        private string GenerateOrderReference()
-        {
-            var date = DateTime.UtcNow;
-            var reference = $"ORDER-{date.Year}-{date.Month}-{date.Day}-{Guid.NewGuid()}";
-            return reference;
-        }
-  
-
-      
 
         /// <summary>
         /// /////
@@ -673,6 +415,7 @@ namespace Online_Marketplace.BLL.Implementation
             }
 
             var review = _mapper.Map<ProductReviews>(reviewDto);
+
             review.BuyerId = buyer.Id;
             review.DateCreated = DateTime.UtcNow;
 
@@ -682,6 +425,53 @@ namespace Online_Marketplace.BLL.Implementation
 
             return "Review added successfully";
         }
+
+
+        /* public async Task<Product> CreateProduct(ProductCreateDto productDto)
+         {
+             try
+             {
+                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                 if (userId == null)
+                 {
+                     throw new Exception("User not found");
+                 }
+
+                 var product = _mapper.Map<Product>(productDto);
+
+                 Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+                 if (seller == null)
+                 {
+                     throw new Exception("Seller not found");
+                 }
+
+                 product.SellerId = seller.Id;
+
+                 // Set the shipping rate and policy for the seller
+                 await SetShippingRateAndPolicyForSeller(seller.Id, productDto.ShippingRate, productDto.ShippingPolicy);
+
+                 await _productRepo.AddAsync(product);
+                 await _unitOfWork.SaveChangesAsync();
+
+                 return product;
+             }
+             catch (Exception ex)
+             {
+                 var sb = new StringBuilder();
+                 sb.AppendLine("An error occurred while getting creating product:");
+                 sb.AppendLine(ex.Message);
+                 sb.AppendLine(ex.StackTrace);
+                 sb.AppendLine("Inner exception:");
+                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                 _logger.LogError(sb.ToString());
+
+                 throw;
+             }
+         }*/
+
 
     }
 }

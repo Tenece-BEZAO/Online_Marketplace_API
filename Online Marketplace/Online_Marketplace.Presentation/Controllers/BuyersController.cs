@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
+using Online_Marketplace.Shared.Filters;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -20,6 +21,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
 
         [HttpPost("register")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterBuyer([FromBody] BuyerForRegistrationDto buyerForRegistration)
         {
 

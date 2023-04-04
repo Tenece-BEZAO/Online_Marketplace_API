@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Interface;
+using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
+using Online_Marketplace.Shared.Filters;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
-   
+
     [ApiController]
     [Route("marketplace/[controller]")]
     public class ProductsController : ControllerBase
@@ -23,13 +24,15 @@ namespace Online_Marketplace.Presentation.Controllers
         }
         [Authorize(Roles = "Seller")]
         [HttpPost("Create-Products")]
+        
         public async Task<IActionResult> CreateProduct(ProductCreateDto productdto)
         {
             try
             {
                 var product = await _productService.CreateProduct(productdto);
 
-                return Ok (CreatedAtRoute("GetProductById", new { id = product.Id }, product));
+
+                return Ok (product);
             }
             catch (Exception ex)
             {
@@ -39,7 +42,7 @@ namespace Online_Marketplace.Presentation.Controllers
         }
 
         [HttpGet ("Search-Products")]
-
+        
         [AllowAnonymous]
     
         public async Task<ActionResult<List<ProductCreateDto>>> SearchProducts([FromQuery] ProductSearchDto searchDto)
@@ -67,7 +70,7 @@ namespace Online_Marketplace.Presentation.Controllers
             {
                 var products = await _productService.ViewProducts();
                 return Ok(products);
-            }
+            }  
             catch (Exception ex)
             {
                
@@ -79,6 +82,7 @@ namespace Online_Marketplace.Presentation.Controllers
         }
         [Authorize(Roles = "Buyer")]
         [HttpPost("add-to-cart")]
+       
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
             try
@@ -104,6 +108,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Seller")]
         [HttpPut("Edit")]
+       
         public async Task<ActionResult<Product>> UpdateProduct(int id, ProductCreateDto productDto)
         {
             try
@@ -120,6 +125,7 @@ namespace Online_Marketplace.Presentation.Controllers
         }
         [Authorize(Roles = "Seller")]
         [HttpDelete("Delete/{id}")]
+        
         public async Task<ActionResult> DeleteProduct(int id)
         {
             try
@@ -150,31 +156,7 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-        [Authorize(Roles = "Buyer")]
-        [HttpPost("checkout/{cartId:int}")]
-        public async Task<IActionResult> Checkout(int cartId)
-        {
-            try
-            {
-                var result = await _productService.CheckoutAsync(cartId);
-
-                if (result)
-                {
-                    return Ok("Cart checked out successfully");
-                }
-                else
-                {
-                    return BadRequest("Error occurred while checking out cart");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
-
-                return StatusCode(500, "An error occurred while checking out cart");
-            }
-        }
-
+      
         [Authorize(Roles = "Buyer")]
         [HttpPost("Add-Reviews") ]
         public async Task<IActionResult> AddReview(ReviewDto reviewDto)
@@ -191,27 +173,6 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-        [HttpPost("verifypayment")]
-        public async Task<IActionResult> VerifyPayment([FromQuery] string referenceCode)
-        {
-            try
-            {
-                var success = await _productService.VerifyPaymentAndUpdateOrderStatus(referenceCode);
-
-                if (success)
-                {
-                    return Ok(new { message = "Payment verified" });
-                }
-                else
-                {
-                    return BadRequest(new { message = "Payment verification failed" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
-            }
-        }
 
     }
 
