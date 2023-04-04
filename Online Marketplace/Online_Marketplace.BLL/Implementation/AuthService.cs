@@ -6,7 +6,6 @@ using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -45,14 +44,14 @@ namespace Online_Marketplace.BLL.Implementation
 
                     return new ServiceResponse<string>
                     {
-                        Success = false,   
+                        Success = false,
                         Message = "Login failed. Wrong username or password."
                     };
                 }
                 return new ServiceResponse<string>
                 {
                     Success = true,
-                    Message = "Login successful. Wrong username or password."
+                    Message = "Login successful."
                 };
             }
             catch (Exception ex)
@@ -91,7 +90,7 @@ namespace Online_Marketplace.BLL.Implementation
 
         }
 
-        private async Task<List<Claim>> GetClaims( )
+        private async Task<List<Claim>> GetClaims()
         {
 
             var claims = new List<Claim>

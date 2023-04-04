@@ -47,12 +47,7 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
                 var profile = new AdminProfile
                 {
 
-                    FirstName = adminProfile.FirstName,
-                    LastName = adminProfile.LastName,
-                    PhoneNumber = adminProfile.PhoneNumber,
-                    Email = adminProfile.Email,
-                    Address = adminProfile.Address,
-                    UserName = adminProfile.UserName
+                    Address = adminProfile.Address
 
                 };
 
@@ -62,7 +57,7 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
                 {
                     throw new Exception("Admin not found");
                 }
-                
+
                 profile.AdminIdentity = admin.Id;
 
 
@@ -118,16 +113,9 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
                     throw new Exception("Admin profile not found");
                 }
 
-                // Update the AdminProfile object with the new values from the DTO
-                profile.FirstName = adminProfile.FirstName;
-                profile.LastName = adminProfile.LastName;
-                profile.PhoneNumber = adminProfile.PhoneNumber;
-                profile.Email = adminProfile.Email;
                 profile.Address = adminProfile.Address;
-                profile.UserName = adminProfile.UserName;
 
                 await _adminProfileRepo.UpdateAsync(profile);
-                await _unitOfWork.SaveChangesAsync();
 
                 return profile;
             }

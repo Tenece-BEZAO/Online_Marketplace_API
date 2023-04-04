@@ -2,9 +2,11 @@
 
 namespace Online_Marketplace.Shared.DTOs
 {
-    public record BuyerProfileDto : UserForRegistrationDto
+    public record BuyerProfileDto 
     {
         [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
+
+
     }
 }

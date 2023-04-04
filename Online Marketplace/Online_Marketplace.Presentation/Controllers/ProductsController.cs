@@ -8,7 +8,7 @@ using Online_Marketplace.Shared.DTOs;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
-   
+
     [ApiController]
     [Route("marketplace/[controller]")]
     public class ProductsController : ControllerBase
@@ -21,6 +21,7 @@ namespace Online_Marketplace.Presentation.Controllers
             _productService = productService;
             _logger = logger;
         }
+
         [Authorize(Roles = "Seller")]
         [HttpPost("Create-Products")]
         public async Task<IActionResult> CreateProduct(ProductCreateDto productdto)
@@ -29,7 +30,7 @@ namespace Online_Marketplace.Presentation.Controllers
             {
                 var product = await _productService.CreateProduct(productdto);
 
-                return Ok (CreatedAtRoute("GetProductById", new { id = product.Id }, product));
+                return Ok(CreatedAtRoute("GetProductById", new { id = product.Id }, product));
             }
             catch (Exception ex)
             {
@@ -38,10 +39,10 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-        [HttpGet ("Search-Products")]
+        [HttpGet("Search-Products")]
 
         [AllowAnonymous]
-    
+
         public async Task<ActionResult<List<ProductCreateDto>>> SearchProducts([FromQuery] ProductSearchDto searchDto)
         {
             try
@@ -52,10 +53,10 @@ namespace Online_Marketplace.Presentation.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-               
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -70,10 +71,10 @@ namespace Online_Marketplace.Presentation.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-               
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -83,7 +84,7 @@ namespace Online_Marketplace.Presentation.Controllers
         {
             try
             {
-                var result = await _productService.AddToCartAsync( productId, quantity);
+                var result = await _productService.AddToCartAsync(productId, quantity);
 
                 if (result)
                 {
@@ -176,7 +177,7 @@ namespace Online_Marketplace.Presentation.Controllers
         }
 
         [Authorize(Roles = "Buyer")]
-        [HttpPost("Add-Reviews") ]
+        [HttpPost("Add-Reviews")]
         public async Task<IActionResult> AddReview(ReviewDto reviewDto)
         {
             try

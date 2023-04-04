@@ -15,9 +15,6 @@ using System.Text;
 namespace Online_Marketplace.BLL.Implementation
 {
 
-
-
-
     public class ProductServices : IProductService
     {
         private readonly IMapper _mapper;
@@ -32,8 +29,6 @@ namespace Online_Marketplace.BLL.Implementation
         private readonly ILoggerManager _logger;
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
-
 
 
 
@@ -223,8 +218,8 @@ namespace Online_Marketplace.BLL.Implementation
 
                 return _mapper.Map<List<ProductCreateDto>>(sellerPruducts);
             }
-           
-              catch (Exception ex)
+
+            catch (Exception ex)
             {
                 var sb = new StringBuilder();
                 sb.AppendLine("An error occurred while getting seller products:");

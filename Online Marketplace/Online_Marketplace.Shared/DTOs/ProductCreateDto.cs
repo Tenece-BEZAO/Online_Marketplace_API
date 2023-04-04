@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Online_Marketplace.Shared.DTOs
 {
@@ -24,7 +19,7 @@ namespace Online_Marketplace.Shared.DTOs
         [Required(ErrorMessage = "brand is required")]
         public string Brand { get; set; }
 
-      
+
     }
 }
 
