@@ -11,6 +11,8 @@ namespace Online_Marketplace.DAL.Entities
         {
         }
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
@@ -21,7 +23,7 @@ namespace Online_Marketplace.DAL.Entities
             .HasOne(ci => ci.Product)
             .WithMany()
             .HasForeignKey(ci => ci.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<OrderItem>()
             .HasOne(ci => ci.Product)

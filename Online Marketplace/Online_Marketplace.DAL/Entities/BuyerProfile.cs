@@ -15,8 +15,8 @@ namespace Online_Marketplace.DAL.Entities
 
 
         public Buyer Buyer { get; set; }
-        public Wishlist Wishlist { get; set; }
-        public ShoppingCart ShoppingCart { get; set; }
+       
+       
         public List<Order> Orders { get; set; } //orders buyer placed
     }
 }
