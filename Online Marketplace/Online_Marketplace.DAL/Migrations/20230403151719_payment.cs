@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class firstmigrate : Migration
+    public partial class payment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -375,7 +375,11 @@ namespace Online_Marketplace.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OrderStatus = table.Column<int>(type: "int", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -518,9 +522,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "187abf9a-3de0-4b0d-896f-93b4163758b3", "11b089a0-731b-41ec-af11-732342d21906", "Buyer", "BUYER" },
-                    { "64352825-3fb1-46fe-9277-99f9366757bd", "e0d4029d-fbab-4a33-bb4a-9bffa4d0ada2", "Seller", "SELLER" },
-                    { "9feac5d5-727c-4802-bde9-eb0832e061d8", "b35d6f09-5536-4178-9f53-6c4138dc5d43", "Admin", "ADMIN" }
+                    { "0f27544d-2481-40c0-8422-71c43d736efb", "c8e7c0e6-c0f8-4151-b75d-fafdb982922f", "Seller", "SELLER" },
+                    { "828cbbea-6de6-4647-aeb6-1b10a40c431b", "d529e69c-fe1d-4b6f-be77-21f26cfa3888", "Buyer", "BUYER" },
+                    { "c4254952-dd0c-4a59-bfdb-0f5e93cdfe44", "8ae30c09-52b5-4f50-8479-dc662c88da59", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

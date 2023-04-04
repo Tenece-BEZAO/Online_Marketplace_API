@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230331124808_firstmigrate")]
-    partial class firstmigrate
+    [Migration("20230403151719_payment")]
+    partial class payment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9feac5d5-727c-4802-bde9-eb0832e061d8",
-                            ConcurrencyStamp = "b35d6f09-5536-4178-9f53-6c4138dc5d43",
+                            Id = "c4254952-dd0c-4a59-bfdb-0f5e93cdfe44",
+                            ConcurrencyStamp = "8ae30c09-52b5-4f50-8479-dc662c88da59",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "64352825-3fb1-46fe-9277-99f9366757bd",
-                            ConcurrencyStamp = "e0d4029d-fbab-4a33-bb4a-9bffa4d0ada2",
+                            Id = "0f27544d-2481-40c0-8422-71c43d736efb",
+                            ConcurrencyStamp = "c8e7c0e6-c0f8-4151-b75d-fafdb982922f",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "187abf9a-3de0-4b0d-896f-93b4163758b3",
-                            ConcurrencyStamp = "11b089a0-731b-41ec-af11-732342d21906",
+                            Id = "828cbbea-6de6-4647-aeb6-1b10a40c431b",
+                            ConcurrencyStamp = "d529e69c-fe1d-4b6f-be77-21f26cfa3888",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -524,11 +524,26 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentGateway")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TransactionReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
