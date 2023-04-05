@@ -15,9 +15,6 @@ using System.Text;
 namespace Online_Marketplace.BLL.Implementation.MarketServices
 {
 
-
-
-
     public class ProductServices : IProductService
     {
         private readonly IMapper _mapper;

@@ -89,6 +89,7 @@ namespace Online_Marketplace.API.Extensions
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IUserServices, UserServices>();
+
             services.AddScoped<IAdminServices, AdminServices>();
             services.AddScoped<IBuyerServices, BuyerServices>();
             services.AddScoped<ISellerServices, SellerServices>();

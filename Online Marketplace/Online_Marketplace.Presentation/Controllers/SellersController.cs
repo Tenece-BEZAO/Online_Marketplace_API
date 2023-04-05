@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Online_Marketplace.BLL.Interface.IProfileServices;
 using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
 using Online_Marketplace.Shared.Filters;
@@ -11,11 +13,12 @@ namespace Online_Marketplace.Presentation.Controllers
     {
 
         private readonly ISellerServices _sellerServices;
+        private readonly ISellerProfileServices _sellerProfileServices;
 
-
-        public SellersController(ISellerServices sellerServices)
+        public SellersController(ISellerServices sellerServices, ISellerProfileServices sellerProfileServices)
         {
             _sellerServices = sellerServices;
+            _sellerProfileServices = sellerProfileServices;
         }
 
 
@@ -28,17 +31,43 @@ namespace Online_Marketplace.Presentation.Controllers
             var response = await _sellerServices.RegisterSeller(sellerForRegistration);
 
             return Ok(response);
-
         }
 
 
 
         [HttpPost("createProfile")]
-        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> CreateProfile([FromBody] SellerProfileDto sellerProfile)
         {
+            try
+            {
+                var response = await _sellerProfileServices.CreateProfile(sellerProfile);
 
-            return null;
+                return Ok(response);
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+
+        [HttpPost("updateProfile")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateProfile([FromBody] SellerProfileDto sellerProfile)
+        {
+            try
+            {
+                var response = await _sellerProfileServices.UpdateProfile(sellerProfile);
+
+                return Ok(response);
+            }
+
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
 
         }
     }

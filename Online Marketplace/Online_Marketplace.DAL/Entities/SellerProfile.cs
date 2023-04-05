@@ -5,8 +5,10 @@ namespace Online_Marketplace.DAL.Entities
 {
     public class SellerProfile : BaseUserProfile
     {
+
         public string BusinessName { get; set; }
         public string BusinessDescription { get; set; }
+        public string BusinessCatagories { get; set; }
 
         [ForeignKey(nameof(Seller))]
         public int SellerIdentity { get; set; }
