@@ -46,8 +46,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
                 if (result.Status)
                 {
-                    var orderReference = result.Data.Reference;
-                    var order = await _orderRepo.GetSingleByAsync(o => o.Reference == orderReference);
+                    var order = await _orderRepo.GetSingleByAsync(o => o.TransactionReference == referenceCode);
 
                     if (order != null)
                     {

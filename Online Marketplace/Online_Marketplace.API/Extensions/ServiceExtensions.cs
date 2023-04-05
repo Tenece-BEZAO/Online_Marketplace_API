@@ -93,6 +93,8 @@ namespace Online_Marketplace.API.Extensions
             services.AddScoped<IAdminServices, AdminServices>();
             services.AddScoped<IBuyerServices, BuyerServices>();
             services.AddScoped<ISellerServices, SellerServices>();
+            services.AddScoped<ISellerProfileServices, SellerProfileServices>();
+            services.AddScoped<IBuyerProfileServices, BuyerProfileServices>();
             services.AddScoped<IProductService, ProductServices>();
             services.AddScoped<IAdminProfileServices, AdminProfileServices>();
             services.AddScoped<IOrderService, OrderService>();
