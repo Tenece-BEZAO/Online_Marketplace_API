@@ -8,11 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404210312_first.cs
     public partial class first : Migration
-========
-    public partial class InitialMigration : Migration
->>>>>>>> c29d821960580a766f49af52435b89d0d0494c4f:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404185514_InitialMigration.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -328,14 +324,10 @@ namespace Online_Marketplace.DAL.Migrations
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404210312_first.cs
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
-========
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
->>>>>>>> c29d821960580a766f49af52435b89d0d0494c4f:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404185514_InitialMigration.cs
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -484,15 +476,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-<<<<<<<< HEAD:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404210312_first.cs
-                    { "654bc1a5-9aa4-45c5-bedd-b87414eae723", "e69ce4f0-4245-491d-a39f-759513c12dde", "Buyer", "BUYER" },
-                    { "b43f0d3a-f5ae-4953-a404-a4d9522af309", "2b86262a-5cb7-44e0-9fa4-e678d28265ef", "Admin", "ADMIN" },
-                    { "f898d596-833d-40f6-a427-df4bb1b5336d", "4bb24210-6d7b-4e57-8144-f7a7b8e4a953", "Seller", "SELLER" }
-========
-                    { "1bb6df70-5813-46e2-a7ab-615af3bfec5c", "841d444e-6ec3-43af-a344-b5da02b84809", "Admin", "ADMIN" },
-                    { "673f87ce-9f0e-460e-94d6-a3488edc8a8f", "6e3b46a5-4793-4093-acc1-c14fbb1391d6", "Seller", "SELLER" },
-                    { "ef671e0f-4d69-486b-96e2-b8d2be25cfa8", "0c6de044-7c3a-496c-a07c-7c1a7a8031b0", "Buyer", "BUYER" }
->>>>>>>> c29d821960580a766f49af52435b89d0d0494c4f:Online Marketplace/Online_Marketplace.DAL/Migrations/20230404185514_InitialMigration.cs
+                    { "0d5f5be6-58c6-4c70-93b9-5ead756e1330", "ebcfcd8d-cd8e-487d-8cbe-2d3eb689f90a", "Buyer", "BUYER" },
+                    { "b7385a12-3147-4223-b756-4a3f771c1765", "0881e61a-e551-4db9-8664-62b063f4254c", "Admin", "ADMIN" },
+                    { "f3ec6ff4-c9e1-4a3c-8ec0-775c87cd23bd", "5bc28847-97e3-4b16-855a-a25e613dc4e5", "Seller", "SELLER" }
                 });
 
             migrationBuilder.CreateIndex(
