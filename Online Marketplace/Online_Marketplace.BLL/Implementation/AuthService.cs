@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Online_Marketplace.BLL.Interface.IUserServices;
+using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Online_Marketplace.BLL.Implementation.UserServices
+namespace Online_Marketplace.BLL.Implementation
 {
     public sealed class AuthService : IAuthService
     {
@@ -38,7 +37,7 @@ namespace Online_Marketplace.BLL.Implementation.UserServices
 
                 _user = await _userManager.FindByNameAsync(userForAuth.UserName);
 
-                var result = _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
+                var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
                 if (!result)
                 {
                     _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong username or password.");
@@ -52,7 +51,7 @@ namespace Online_Marketplace.BLL.Implementation.UserServices
                 return new ServiceResponse<string>
                 {
                     Success = true,
-                    Message = "Login successful. Wrong username or password."
+                    Message = "Login successful."
                 };
             }
             catch (Exception ex)

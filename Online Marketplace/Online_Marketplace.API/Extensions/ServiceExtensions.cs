@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
 using Online_Marketplace.BLL.Implementation.MarketServices;
 using Online_Marketplace.BLL.Implementation.ProfileServices;
 using Online_Marketplace.BLL.Implementation.Services;
@@ -10,11 +11,13 @@ using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.BLL.Interface.IProfileServices;
 using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.BLL.Interface.IUserServices;
+
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger;
 using Online_Marketplace.Logger.Logger;
 using System.Text;
+
 
 namespace Online_Marketplace.API.Extensions
 {
@@ -89,9 +92,15 @@ namespace Online_Marketplace.API.Extensions
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IUserServices, UserServices>();
+
             services.AddScoped<IAdminServices, AdminServices>();
             services.AddScoped<IBuyerServices, BuyerServices>();
             services.AddScoped<ISellerServices, SellerServices>();
+            
+            services.AddScoped<IAdminProfileServices, AdminProfileServices>();
+            services.AddScoped<ISellerProfileServices, SellerProfileServices>();
+            services.AddScoped<IBuyerProfileServices, BuyerProfileServices>();
+
             services.AddScoped<IProductService, ProductServices>();
             services.AddScoped<IAdminProfileServices, AdminProfileServices>();
             services.AddScoped<IOrderService, OrderService>();

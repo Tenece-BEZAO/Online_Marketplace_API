@@ -1,10 +1,13 @@
-﻿namespace Online_Marketplace.BLL.Interface.IProfileServices
+﻿using Online_Marketplace.DAL.Entities;
+using Online_Marketplace.Shared.DTOs;
+
+namespace Online_Marketplace.BLL.Interface.IProfileServices
 {
     public interface IBuyerProfileServices
     {
-        void CreateProfile();
+        Task<BuyerProfile> CreateProfile(BuyerProfileDto buyerProfile);
         void DisplayProfile();
-        void UpdateProfile();
+        Task<BuyerProfile> UpdateProfile(BuyerProfileDto buyerProfile);
         void DeleteProfile();
     }
 }

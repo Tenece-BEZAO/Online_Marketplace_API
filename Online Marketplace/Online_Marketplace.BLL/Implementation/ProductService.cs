@@ -3,20 +3,17 @@ using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Online_Marketplace.BLL.Interface.IMarketServices;
+using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
+using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
 using System.Security.Claims;
 using System.Text;
 
-namespace Online_Marketplace.BLL.Implementation.MarketServices
+namespace Online_Marketplace.BLL.Implementation
 {
-
-
-
 
     public class ProductServices : IProductService
     {
@@ -33,9 +30,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductServices( IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
+
+
+        public ProductServices(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
-            
+
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -53,7 +52,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
 
 
-        public async Task<string> CreateProduct(ProductCreateDto productDto)
+        public async Task<Product> CreateProduct(ProductCreateDto productDto)
         {
             try
             {
@@ -82,7 +81,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 await _productRepo.AddAsync(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                return "product created successfully";
+                return product;
             }
 
             catch (Exception ex)
@@ -162,17 +161,12 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                     throw new Exception("User not found");
                 }
 
-                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x=>x.Include(s=>s.Seller));
+                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId);
 
                 if (existingProduct == null)
                 {
                     throw new Exception("Product not found");
                 }
-
-
-              
-
-                var buyer = await _sellerRepo.GetSingleByAsync(b => b.UserId == userId);
 
 
 
@@ -200,6 +194,10 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 throw;
             }
         }
+
+
+
+
 
 
         public async Task<List<ProductCreateDto>> GetSellerProducts()
@@ -273,19 +271,14 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
         public async Task<List<ProductCreateDto>> ViewProducts()
         {
             try
             {
-                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview ));
+                var products = await _productRepo.GetAllAsync();
 
 
                 var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
-             
 
                 return productDtos;
             }
@@ -308,13 +301,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+
         public async Task<bool> AddToCartAsync(int productId, int quantity)
         {
             try
@@ -391,14 +378,78 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             }
         }
 
+        public async Task<bool> CheckoutAsync(int cartId)
+        {
+            try
+            {
+                var cart = await _cartRepo.GetSingleByAsync(
+                    c => c.Id == cartId,
+                    include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
+                );
+
+                if (cart == null)
+                {
+                    throw new Exception("Cart not found");
+                }
+
+                if (cart.CartItems == null || !cart.CartItems.Any())
+                {
+                    throw new Exception("Cart is empty");
+                }
+
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
+
+                if (buyer == null)
+                {
+                    throw new Exception("Buyer not found");
+                }
+
+                var order = new Order
+                {
+                    BuyerId = buyer.Id,
+
+                    OrderDate = DateTime.UtcNow,
+                    OrderStatus = OrderStatus.Pending,
+                    TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
+                };
+
+                await _orderRepo.AddAsync(order);
+
+                var orderItems = cart.CartItems.Select(ci => new OrderItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    Price = ci.Product.Price,
+                    OrderId = order.Id
+                }).ToList();
+
+                await _orderitemRepo.AddRangeAsync(orderItems);
+
+                await _cartRepo.DeleteAsync(cart);
+
+                _logger.LogInfo($"Checked out cart with ID {cart.Id}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while checking out :");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
+            }
+
+        }
 
 
-
-        /// <summary>
-        /// /////
-        /// </summary>
-        /// <param name="reviewDto"></param>
-        /// <returns></returns>
         public async Task<string> AddReview(ReviewDto reviewDto)
         {
             var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -415,7 +466,6 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             }
 
             var review = _mapper.Map<ProductReviews>(reviewDto);
-
             review.BuyerId = buyer.Id;
             review.DateCreated = DateTime.UtcNow;
 
@@ -425,53 +475,6 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
             return "Review added successfully";
         }
-
-
-        /* public async Task<Product> CreateProduct(ProductCreateDto productDto)
-         {
-             try
-             {
-                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                 if (userId == null)
-                 {
-                     throw new Exception("User not found");
-                 }
-
-                 var product = _mapper.Map<Product>(productDto);
-
-                 Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                 if (seller == null)
-                 {
-                     throw new Exception("Seller not found");
-                 }
-
-                 product.SellerId = seller.Id;
-
-                 // Set the shipping rate and policy for the seller
-                 await SetShippingRateAndPolicyForSeller(seller.Id, productDto.ShippingRate, productDto.ShippingPolicy);
-
-                 await _productRepo.AddAsync(product);
-                 await _unitOfWork.SaveChangesAsync();
-
-                 return product;
-             }
-             catch (Exception ex)
-             {
-                 var sb = new StringBuilder();
-                 sb.AppendLine("An error occurred while getting creating product:");
-                 sb.AppendLine(ex.Message);
-                 sb.AppendLine(ex.StackTrace);
-                 sb.AppendLine("Inner exception:");
-                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-                 _logger.LogError(sb.ToString());
-
-                 throw;
-             }
-         }*/
-
 
     }
 }

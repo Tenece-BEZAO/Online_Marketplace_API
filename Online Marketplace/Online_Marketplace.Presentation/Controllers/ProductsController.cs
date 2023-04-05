@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Interface.IMarketServices;
+using Online_Marketplace.BLL.Interface;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using Online_Marketplace.Shared.Filters;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -22,17 +21,16 @@ namespace Online_Marketplace.Presentation.Controllers
             _productService = productService;
             _logger = logger;
         }
+
         [Authorize(Roles = "Seller")]
         [HttpPost("Create-Products")]
-        
         public async Task<IActionResult> CreateProduct(ProductCreateDto productdto)
         {
             try
             {
                 var product = await _productService.CreateProduct(productdto);
 
-
-                return Ok (product);
+                return Ok(CreatedAtRoute("GetProductById", new { id = product.Id }, product));
             }
             catch (Exception ex)
             {
@@ -41,10 +39,10 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-        [HttpGet ("Search-Products")]
-        
+        [HttpGet("Search-Products")]
+
         [AllowAnonymous]
-    
+
         public async Task<ActionResult<List<ProductCreateDto>>> SearchProducts([FromQuery] ProductSearchDto searchDto)
         {
             try
@@ -55,10 +53,10 @@ namespace Online_Marketplace.Presentation.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-               
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
@@ -70,24 +68,23 @@ namespace Online_Marketplace.Presentation.Controllers
             {
                 var products = await _productService.ViewProducts();
                 return Ok(products);
-            }  
+            }
             catch (Exception ex)
             {
-               
+
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-               
+
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
         [Authorize(Roles = "Buyer")]
         [HttpPost("add-to-cart")]
-       
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
             try
             {
-                var result = await _productService.AddToCartAsync( productId, quantity);
+                var result = await _productService.AddToCartAsync(productId, quantity);
 
                 if (result)
                 {
@@ -108,7 +105,6 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Seller")]
         [HttpPut("Edit")]
-       
         public async Task<ActionResult<Product>> UpdateProduct(int id, ProductCreateDto productDto)
         {
             try
@@ -125,7 +121,6 @@ namespace Online_Marketplace.Presentation.Controllers
         }
         [Authorize(Roles = "Seller")]
         [HttpDelete("Delete/{id}")]
-        
         public async Task<ActionResult> DeleteProduct(int id)
         {
             try
@@ -156,9 +151,33 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-      
         [Authorize(Roles = "Buyer")]
-        [HttpPost("Add-Reviews") ]
+        [HttpPost("checkout/{cartId:int}")]
+        public async Task<IActionResult> Checkout(int cartId)
+        {
+            try
+            {
+                var result = await _productService.CheckoutAsync(cartId);
+
+                if (result)
+                {
+                    return Ok("Cart checked out successfully");
+                }
+                else
+                {
+                    return BadRequest("Error occurred while checking out cart");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
+
+                return StatusCode(500, "An error occurred while checking out cart");
+            }
+        }
+
+        [Authorize(Roles = "Buyer")]
+        [HttpPost("Add-Reviews")]
         public async Task<IActionResult> AddReview(ReviewDto reviewDto)
         {
             try
@@ -172,7 +191,6 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
 
     }
 
