@@ -25,9 +25,7 @@ namespace Online_Marketplace.Presentation.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAdmin([FromBody] AdminForRegistrationDto adminForRegistration)
         {
-
             var response = await _adminServices.RegisterAdmin(adminForRegistration);
-
             return Ok(response);
 
         }
@@ -37,17 +35,9 @@ namespace Online_Marketplace.Presentation.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProfile([FromBody] AdminProfileDto adminProfile)
         {
-            try
-            {
-                var response = await _adminProfileServices.CreateProfile(adminProfile);
 
-                return Ok(response);
-            }
-
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var response = await _adminProfileServices.CreateProfile(adminProfile);
+            return Ok(response);
 
         }
 
@@ -56,17 +46,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProfile([FromBody] AdminProfileDto adminProfile)
         {
-            try
-            {
-                var response = await _adminProfileServices.UpdateProfile(adminProfile);
 
-                return Ok(response);
-            }
+            var response = await _adminProfileServices.UpdateProfile(adminProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
 
         }
     }

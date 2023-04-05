@@ -30,42 +30,36 @@ namespace Online_Marketplace.BLL.Implementation.Services
 
         public async Task<string> RegisterSeller(SellerForRegistrationDto sellerForRegistration)
         {
-            try
+            
+            _logger.LogInfo("Creating the Seller as a user first, before assigning the seller role to them and them add them to Sellers table.");
+
+            var user = await _userServices.RegisterUser(new UserForRegistrationDto
             {
-                _logger.LogInfo("Creating the Seller as a user first, before assigning the seller role to them and them add them to Sellers table.");
+                FirstName = sellerForRegistration.FirstName,
+                LastName = sellerForRegistration.LastName,
+                Email = sellerForRegistration.Email,
+                Password = sellerForRegistration.Password,
+                UserName = sellerForRegistration.UserName
+            });
 
-                var user = await _userServices.RegisterUser(new UserForRegistrationDto
-                {
-                    FirstName = sellerForRegistration.FirstName,
-                    LastName = sellerForRegistration.LastName,
-                    Email = sellerForRegistration.Email,
-                    Password = sellerForRegistration.Password,
-                    UserName = sellerForRegistration.UserName
-                });
+            await _userManager.AddToRoleAsync(user, "Seller");
 
-                await _userManager.AddToRoleAsync(user, "Seller");
-
-                var seller = new Seller
-                {
-
-                    FirstName = sellerForRegistration.FirstName,
-                    LastName = sellerForRegistration.LastName,
-                    PhoneNumber = sellerForRegistration.PhoneNumber,
-                    Email = sellerForRegistration.Email,
-                    BusinessName = sellerForRegistration.BusinessName,
-                    UserId = user.Id
-
-                };
-
-                var result = await _sellerRepo.AddAsync(seller);
-
-                return $"Registration Successful! You can now start listing your product!";
-            }
-            catch (Exception ex)
+            var seller = new Seller
             {
-                _logger.LogError($"Something went wrong in the {nameof(RegisterSeller)} service method {ex}");
-                throw;
-            }
+
+                FirstName = sellerForRegistration.FirstName,
+                LastName = sellerForRegistration.LastName,
+                PhoneNumber = sellerForRegistration.PhoneNumber,
+                Email = sellerForRegistration.Email,
+                BusinessName = sellerForRegistration.BusinessName,
+                UserId = user.Id
+
+            };
+
+            var result = await _sellerRepo.AddAsync(seller);
+
+            return $"Registration Successful! You can now start listing your product!";
+            
 
         }
     }

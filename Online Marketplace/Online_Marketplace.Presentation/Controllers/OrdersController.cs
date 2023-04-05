@@ -1,17 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Implementation;
-using Online_Marketplace.BLL.Implementation.MarketServices;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using Online_Marketplace.Shared.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -24,40 +16,19 @@ namespace Online_Marketplace.Presentation.Controllers
         private readonly ILoggerManager _logger;
 
 
-
         public OrdersController(IOrderService orderService, ILoggerManager logger)
         {
-
-
             _orderService = orderService;
-
             _logger = logger;
-
         }
 
 
         [Authorize(Roles = "Buyer")]
-        [HttpGet ("buyer-order-history")]
-       
-        public async Task<IActionResult> BuyerOrderHistory() {
-
-        
-
-            try
-            {
-                var orders =  await _orderService.GetOrderHistoryAsync();
-
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Something went wrong in the {nameof(BuyerOrderHistory)} controller action {ex}");
-
-
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
-
+        [HttpGet("buyer-order-history")]
+        public async Task<IActionResult> BuyerOrderHistory()
+        {
+            var orders = await _orderService.GetOrderHistoryAsync();
+            return Ok(orders);
 
         }
 
@@ -66,32 +37,18 @@ namespace Online_Marketplace.Presentation.Controllers
         [HttpGet("seller-view-orders")]
         public async Task<IActionResult> SellerOrderHistory()
         {
-
-            try
-            {
-                var orders = await _orderService.GetSellerOrderHistoryAsync();
-
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Something went wrong in the {nameof(SellerOrderHistory)} controller action {ex}");
-
-
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
-
+            var orders = await _orderService.GetSellerOrderHistoryAsync();
+            return Ok(orders);
 
         }
+
+
         [HttpGet("{id}/status")]
-       
         public async Task<IActionResult> GetOrderStatus(int id)
         {
             try
             {
                 var orderStatuses = await _orderService.GetOrderStatusAsync(id);
-
                 return Ok(orderStatuses);
             }
             catch (Exception ex)
@@ -99,7 +56,7 @@ namespace Online_Marketplace.Presentation.Controllers
                 var sb = new StringBuilder();
                 sb.AppendLine("An error occurred while getting order status:");
                 sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace); 
+                sb.AppendLine(ex.StackTrace);
                 sb.AppendLine("Inner exception:");
                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
 
@@ -109,30 +66,22 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
+
         [Authorize(Roles = "Buyer")]
         [HttpPost("checkout/{cartId:int}")]
-        
         public async Task<IActionResult> Checkout(int cartId)
         {
-            try
-            {
-                var result = await _orderService.CheckoutAsync (cartId);
+            var result = await _orderService.CheckoutAsync(cartId);
 
-                if (result)
-                {
-                    return Ok("Cart checked out successfully");
-                }
-                else
-                {
-                    return BadRequest("Error occurred while checking out cart");
-                }
-            }
-            catch (Exception ex)
+            if (result)
             {
-                _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
-
-                return StatusCode(500, "An error occurred while checking out cart");
+                return Ok("Cart checked out successfully");
             }
+            else
+            {
+                return BadRequest("Error occurred while checking out cart");
+            }
+            
         }
 
 
@@ -143,7 +92,7 @@ namespace Online_Marketplace.Presentation.Controllers
         {
             try
             {
-                var receipt = await _orderService.GenerateReceiptAsync( orderId);
+                var receipt = await _orderService.GenerateReceiptAsync(orderId);
 
                 // Return the receipt as a file
                 return File(receipt, "application/pdf", $"receipt_{orderId}.pdf");
@@ -166,15 +115,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [HttpPost("updateOrderStatus")]
         public async Task<IActionResult> UpdateOrderStatus(UpdateOrderStatusDto updateOrderStatusDto)
         {
-            try
-            {
-                await _orderService.UpdateOrderStatusAsync(updateOrderStatusDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+            await _orderService.UpdateOrderStatusAsync(updateOrderStatusDto);
+            return Ok();
+            
         }
 
     }

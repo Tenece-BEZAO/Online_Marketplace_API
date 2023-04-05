@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230405113926_first")]
-    partial class first
+    [Migration("20230405131804_ThirdMigration")]
+    partial class ThirdMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b7385a12-3147-4223-b756-4a3f771c1765",
-                            ConcurrencyStamp = "0881e61a-e551-4db9-8664-62b063f4254c",
+                            Id = "cab90bdc-e7fb-4aa8-b617-52ef360f377e",
+                            ConcurrencyStamp = "21f68be5-0759-4a8f-a59f-ce329081cc75",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f3ec6ff4-c9e1-4a3c-8ec0-775c87cd23bd",
-                            ConcurrencyStamp = "5bc28847-97e3-4b16-855a-a25e613dc4e5",
+                            Id = "9910ad3e-f6bd-48b8-9734-5b6f3b177f87",
+                            ConcurrencyStamp = "d48d0146-0fb2-4a52-b821-5a1fa007a391",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "0d5f5be6-58c6-4c70-93b9-5ead756e1330",
-                            ConcurrencyStamp = "ebcfcd8d-cd8e-487d-8cbe-2d3eb689f90a",
+                            Id = "a2bd779d-b3f3-41cd-816a-e72aa53090fb",
+                            ConcurrencyStamp = "cd1e0e8b-2a94-4b08-b320-f76afe5f71d4",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -604,10 +604,10 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId1")
+                    b.Property<int>("ProductIdentity")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -619,7 +619,7 @@ namespace Online_Marketplace.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ProductId1");
+                    b.HasIndex("ProductIdentity");
 
                     b.ToTable("ProductReviews");
                 });
@@ -851,15 +851,15 @@ namespace Online_Marketplace.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Online_Marketplace.DAL.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("Online_Marketplace.DAL.Entities.Product", null)
                         .WithMany("ProductReview")
-                        .HasForeignKey("ProductId1");
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("Online_Marketplace.DAL.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductIdentity")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Buyer");
 

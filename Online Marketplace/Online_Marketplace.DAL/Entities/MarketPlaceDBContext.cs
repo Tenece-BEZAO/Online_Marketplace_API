@@ -54,7 +54,7 @@ namespace Online_Marketplace.DAL.Entities
             {
                 entity.HasOne(ci => ci.Product)
                 .WithMany()
-                .HasForeignKey(ci => ci.ProductId)
+                .HasForeignKey(ci => ci.ProductIdentity)
                 .OnDelete(DeleteBehavior.NoAction);
             });
 

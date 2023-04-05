@@ -30,43 +30,36 @@ namespace Online_Marketplace.BLL.Implementation.Services
 
         public async Task<string> RegisterAdmin(AdminForRegistrationDto adminForRegistration)
         {
-            try
+            
+            _logger.LogInfo("Creating the Admin as a user first, before assigning the admin role to them and them add them to Admins table.");
+
+            var user = await _userServices.RegisterUser(new UserForRegistrationDto
             {
-                _logger.LogInfo("Creating the Admin as a user first, before assigning the admin role to them and them add them to Admins table.");
+                FirstName = adminForRegistration.FirstName,
+                LastName = adminForRegistration.LastName,
+                Email = adminForRegistration.Email,
+                Password = adminForRegistration.Password,
+                UserName = adminForRegistration.UserName
+            });
 
-                var user = await _userServices.RegisterUser(new UserForRegistrationDto
-                {
-                    FirstName = adminForRegistration.FirstName,
-                    LastName = adminForRegistration.LastName,
-                    Email = adminForRegistration.Email,
-                    Password = adminForRegistration.Password,
-                    UserName = adminForRegistration.UserName
-                });
+            await _userManager.AddToRoleAsync(user, "Admin");
 
-                await _userManager.AddToRoleAsync(user, "Admin");
-
-                var admin = new Admin
-                {
-
-                    FirstName = adminForRegistration.FirstName,
-                    LastName = adminForRegistration.LastName,
-                    UserName = adminForRegistration.UserName,
-                    PhoneNumber = adminForRegistration.PhoneNumber,
-                    Email = adminForRegistration.Email,
-                    UserId = user.Id
-
-                };
-
-                var result = await _adminRepo.AddAsync(admin);
-
-                return $"Registration Successful! You now have access as an administrator!";
-            }
-            catch (Exception ex)
+            var admin = new Admin
             {
-                _logger.LogError($"Something went wrong in the {nameof(RegisterAdmin)} service method {ex}");
 
-                throw;
-            }
+                FirstName = adminForRegistration.FirstName,
+                LastName = adminForRegistration.LastName,
+                UserName = adminForRegistration.UserName,
+                PhoneNumber = adminForRegistration.PhoneNumber,
+                Email = adminForRegistration.Email,
+                UserId = user.Id
+
+            };
+
+            var result = await _adminRepo.AddAsync(admin);
+
+            return $"Registration Successful! You now have access as an administrator!";
+            
 
         }
     }

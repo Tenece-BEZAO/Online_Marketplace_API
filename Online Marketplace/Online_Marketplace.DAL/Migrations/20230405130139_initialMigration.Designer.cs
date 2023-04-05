@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Marketplace.DAL.Entities;
 
@@ -11,9 +12,11 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    partial class MarketPlaceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230405130139_initialMigration")]
+    partial class initialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cab90bdc-e7fb-4aa8-b617-52ef360f377e",
-                            ConcurrencyStamp = "21f68be5-0759-4a8f-a59f-ce329081cc75",
+                            Id = "60217e2b-5af1-4705-862f-f14d8d2b9542",
+                            ConcurrencyStamp = "c6e572ce-12d4-459d-bde8-d58f51786304",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9910ad3e-f6bd-48b8-9734-5b6f3b177f87",
-                            ConcurrencyStamp = "d48d0146-0fb2-4a52-b821-5a1fa007a391",
+                            Id = "30d6e3b0-6994-4379-a2ee-b63884bf1f36",
+                            ConcurrencyStamp = "14a2f844-83d4-49e2-bf35-a460492ff385",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "a2bd779d-b3f3-41cd-816a-e72aa53090fb",
-                            ConcurrencyStamp = "cd1e0e8b-2a94-4b08-b320-f76afe5f71d4",
+                            Id = "226fbbc2-a9f1-4e58-ac71-b42b66d7ca69",
+                            ConcurrencyStamp = "deb1388e-e9e9-478c-8c1d-b30fd26eb292",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -601,10 +604,10 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductIdentity")
+                    b.Property<int?>("ProductId1")
                         .HasColumnType("int");
 
                     b.Property<int>("Rating")
@@ -616,7 +619,7 @@ namespace Online_Marketplace.DAL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ProductIdentity");
+                    b.HasIndex("ProductId1");
 
                     b.ToTable("ProductReviews");
                 });
@@ -848,15 +851,15 @@ namespace Online_Marketplace.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Online_Marketplace.DAL.Entities.Product", null)
-                        .WithMany("ProductReview")
-                        .HasForeignKey("ProductId");
-
                     b.HasOne("Online_Marketplace.DAL.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductIdentity")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Online_Marketplace.DAL.Entities.Product", null)
+                        .WithMany("ProductReview")
+                        .HasForeignKey("ProductId1");
 
                     b.Navigation("Buyer");
 

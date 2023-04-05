@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.Logger.Logger;
-using Online_Marketplace.Shared.Filters;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -18,8 +17,6 @@ namespace Online_Marketplace.Presentation.Controllers
 
         public PaymentController(IPaymentService paymentService, ILoggerManager logger)
         {
-
-
             _paymentService = paymentService;
             _logger = logger;
 
@@ -29,23 +26,18 @@ namespace Online_Marketplace.Presentation.Controllers
         [HttpPost("verifypayment")]
         public async Task<IActionResult> VerifyPayment([FromQuery] string referenceCode)
         {
-            try
-            {
-                var success = await _paymentService.VerifyPaymentAndUpdateOrderStatus(referenceCode);
+           
+            var success = await _paymentService.VerifyPaymentAndUpdateOrderStatus(referenceCode);
 
-                if (success)
-                {
-                    return Ok(new { message = "Payment verified" });
-                }
-                else
-                {
-                    return BadRequest(new { message = "Payment verification failed" });
-                }
-            }
-            catch (Exception ex)
+            if (success)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = ex.Message });
+                return Ok(new { message = "Payment verified" });
             }
+            else
+            {
+                return BadRequest(new { message = "Payment verification failed" });
+            }
+            
         }
     }
 }

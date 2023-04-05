@@ -39,17 +39,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [Authorize(Roles = "Seller")]
         public async Task<IActionResult> CreateProfile([FromBody] SellerProfileDto sellerProfile)
         {
-            try
-            {
-                var response = await _sellerProfileServices.CreateProfile(sellerProfile);
 
-                return Ok(response);
-            }
+            var response = await _sellerProfileServices.CreateProfile(sellerProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
         }
 
 
@@ -57,17 +50,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateProfile([FromBody] SellerProfileDto sellerProfile)
         {
-            try
-            {
-                var response = await _sellerProfileServices.UpdateProfile(sellerProfile);
 
-                return Ok(response);
-            }
+            var response = await _sellerProfileServices.UpdateProfile(sellerProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
 
         }
     }

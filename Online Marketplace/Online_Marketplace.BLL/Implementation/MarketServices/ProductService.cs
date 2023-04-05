@@ -3,7 +3,6 @@ using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
@@ -30,9 +29,9 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductServices( IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
+        public ProductServices(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
-            
+
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -159,7 +158,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                     throw new Exception("User not found");
                 }
 
-                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x=>x.Include(s=>s.Seller));
+                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x => x.Include(s => s.Seller));
 
                 if (existingProduct == null)
                 {
@@ -167,7 +166,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 }
 
 
-              
+
 
                 var buyer = await _sellerRepo.GetSingleByAsync(b => b.UserId == userId);
 
@@ -278,11 +277,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         {
             try
             {
-                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview ));
+                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview));
 
 
                 var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
-             
+
 
                 return productDtos;
             }
