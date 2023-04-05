@@ -56,7 +56,7 @@ namespace Online_Marketplace.API.Extensions
             })
             .AddEntityFrameworkStores<MarketPlaceDBContext>()
             .AddDefaultTokenProviders();
-        }
+        }   
         public static void ConfigureAuthServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
