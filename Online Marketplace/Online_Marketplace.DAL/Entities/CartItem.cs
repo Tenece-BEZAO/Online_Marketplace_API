@@ -1,12 +1,4 @@
-﻿using Online_Marketplace.DAL.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Online_Marketplace.DAL.Entities
+﻿namespace Online_Marketplace.DAL.Entities
 {
     public class CartItem
     {

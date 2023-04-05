@@ -2,7 +2,7 @@
 using Online_Marketplace.Shared;
 using Online_Marketplace.Shared.DTOs;
 
-namespace Online_Marketplace.BLL.Interface.IUserServices
+namespace Online_Marketplace.BLL.Interface
 {
     public interface IAuthService
     {

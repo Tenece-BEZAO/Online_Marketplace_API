@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -241,12 +241,7 @@ namespace Online_Marketplace.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdminIdentity = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    AdminIdentity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -266,14 +261,7 @@ namespace Online_Marketplace.DAL.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WishlistId = table.Column<int>(type: "int", nullable: false),
-                    ShoppingCartId = table.Column<int>(type: "int", nullable: false),
-                    BuyerIdentity = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BuyerIdentity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -313,12 +301,8 @@ namespace Online_Marketplace.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BusinessName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BusinessDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SellerIdentity = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BusinessCatagories = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SellerIdentity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -340,10 +324,7 @@ namespace Online_Marketplace.DAL.Migrations
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -433,7 +414,7 @@ namespace Online_Marketplace.DAL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -463,8 +444,7 @@ namespace Online_Marketplace.DAL.Migrations
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProductId1 = table.Column<int>(type: "int", nullable: true)
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -480,11 +460,6 @@ namespace Online_Marketplace.DAL.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ProductReviews_Products_ProductId1",
-                        column: x => x.ProductId1,
-                        principalTable: "Products",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.InsertData(
@@ -492,9 +467,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "654bc1a5-9aa4-45c5-bedd-b87414eae723", "e69ce4f0-4245-491d-a39f-759513c12dde", "Buyer", "BUYER" },
-                    { "b43f0d3a-f5ae-4953-a404-a4d9522af309", "2b86262a-5cb7-44e0-9fa4-e678d28265ef", "Admin", "ADMIN" },
-                    { "f898d596-833d-40f6-a427-df4bb1b5336d", "4bb24210-6d7b-4e57-8144-f7a7b8e4a953", "Seller", "SELLER" }
+                    { "1bb6df70-5813-46e2-a7ab-615af3bfec5c", "841d444e-6ec3-43af-a344-b5da02b84809", "Admin", "ADMIN" },
+                    { "673f87ce-9f0e-460e-94d6-a3488edc8a8f", "6e3b46a5-4793-4093-acc1-c14fbb1391d6", "Seller", "SELLER" },
+                    { "ef671e0f-4d69-486b-96e2-b8d2be25cfa8", "0c6de044-7c3a-496c-a07c-7c1a7a8031b0", "Buyer", "BUYER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -605,11 +580,6 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "IX_ProductReviews_ProductId",
                 table: "ProductReviews",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductReviews_ProductId1",
-                table: "ProductReviews",
-                column: "ProductId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",

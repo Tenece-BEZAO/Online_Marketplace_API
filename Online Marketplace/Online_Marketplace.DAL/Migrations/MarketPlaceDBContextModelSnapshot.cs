@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b43f0d3a-f5ae-4953-a404-a4d9522af309",
-                            ConcurrencyStamp = "2b86262a-5cb7-44e0-9fa4-e678d28265ef",
+                            Id = "1bb6df70-5813-46e2-a7ab-615af3bfec5c",
+                            ConcurrencyStamp = "841d444e-6ec3-43af-a344-b5da02b84809",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f898d596-833d-40f6-a427-df4bb1b5336d",
-                            ConcurrencyStamp = "4bb24210-6d7b-4e57-8144-f7a7b8e4a953",
+                            Id = "673f87ce-9f0e-460e-94d6-a3488edc8a8f",
+                            ConcurrencyStamp = "6e3b46a5-4793-4093-acc1-c14fbb1391d6",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "654bc1a5-9aa4-45c5-bedd-b87414eae723",
-                            ConcurrencyStamp = "e69ce4f0-4245-491d-a39f-759513c12dde",
+                            Id = "ef671e0f-4d69-486b-96e2-b8d2be25cfa8",
+                            ConcurrencyStamp = "0c6de044-7c3a-496c-a07c-7c1a7a8031b0",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -193,23 +193,8 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int>("AdminIdentity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -232,27 +217,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("BuyerIdentity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("WishlistId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -520,20 +484,12 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("PaymentGateway")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Reference")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TransactionReference")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -558,6 +514,7 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductId")
@@ -638,9 +595,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
@@ -649,8 +603,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasIndex("BuyerId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("ProductId1");
 
                     b.ToTable("ProductReviews");
                 });
@@ -663,6 +615,10 @@ namespace Online_Marketplace.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BusinessCatagories")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("BusinessDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -671,23 +627,8 @@ namespace Online_Marketplace.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("SellerIdentity")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -899,10 +840,6 @@ namespace Online_Marketplace.DAL.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Online_Marketplace.DAL.Entities.Product", null)
-                        .WithMany("ProductReview")
-                        .HasForeignKey("ProductId1");
-
                     b.Navigation("Buyer");
 
                     b.Navigation("Product");
@@ -937,11 +874,6 @@ namespace Online_Marketplace.DAL.Migrations
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Product", b =>
-                {
-                    b.Navigation("ProductReview");
                 });
 
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.SellerProfile", b =>

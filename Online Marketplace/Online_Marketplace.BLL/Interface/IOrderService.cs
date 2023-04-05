@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Online_Marketplace.BLL.Interface.IMarketServices
+namespace Online_Marketplace.BLL.Interface
 {
     public interface IOrderService
     {
@@ -17,7 +17,5 @@ namespace Online_Marketplace.BLL.Interface.IMarketServices
         public Task<byte[]> GenerateReceiptAsync(int orderId);
 
         public Task UpdateOrderStatusAsync(UpdateOrderStatusDto updateOrderStatusDto);
-        public Task<bool> CheckoutAsync(int cartId);
-
     }
 }

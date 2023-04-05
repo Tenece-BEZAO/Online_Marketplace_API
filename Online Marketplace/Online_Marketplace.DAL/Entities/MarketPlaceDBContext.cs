@@ -11,34 +11,56 @@ namespace Online_Marketplace.DAL.Entities
         {
         }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Product>()
-            .Property(p => p.Price)
-            .HasPrecision(18, 2);
 
-            modelBuilder.Entity<CartItem>()
-            .HasOne(ci => ci.Product)
-            .WithMany()
-            .HasForeignKey(ci => ci.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.Property(p => p.Price)
+                      .HasPrecision(18, 2);
 
-            modelBuilder.Entity<OrderItem>()
-            .HasOne(ci => ci.Product)
-            .WithMany()
-            .HasForeignKey(ci => ci.ProductId)
-            .OnDelete(DeleteBehavior.Restrict);
+            });
 
 
-            modelBuilder.Entity<ProductReviews>()
-            .HasOne(ci => ci.Product)
-            .WithMany()
-            .HasForeignKey(ci => ci.ProductId)
-            .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<CartItem>(entity =>
+            {
+                entity.HasOne(ci => ci.Product)
+                      .WithMany()
+                      .HasForeignKey(ci => ci.ProductId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
-           
+
+            modelBuilder.Entity<OrderItem>(entity =>
+            {
+                entity.Property(p => p.Price)
+                      .HasPrecision(18, 2);
+
+                entity.HasOne(ci => ci.Product)
+                      .WithMany()
+                      .HasForeignKey(ci => ci.ProductId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
+            modelBuilder.Entity<ProductReviews>(entity =>
+            {
+                entity.HasOne(ci => ci.Product)
+                .WithMany()
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.NoAction);
+            });
+
+
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.Property(p => p.TotalAmount)
+                      .HasPrecision(18, 2);
+            });
+
+
+
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
