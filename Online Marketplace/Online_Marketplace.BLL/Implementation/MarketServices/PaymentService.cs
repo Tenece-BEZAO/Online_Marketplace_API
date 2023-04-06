@@ -42,6 +42,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             {
                 string secret = _configuration.GetSection("ApiSecret").GetSection("SecretKey").Value;
                 PayStackApi payStack = new(secret);
+                
                 TransactionVerifyResponse result = payStack.Transactions.Verify(referenceCode);
 
                 if (result.Status)

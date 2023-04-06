@@ -3,7 +3,6 @@ using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
@@ -30,9 +29,9 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ProductServices( IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
+        public ProductServices(IHttpContextAccessor httpContextAccessor, ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IMapper mapper)
         {
-            
+
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -48,7 +47,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productDto"></param>
+        /// <returns></returns>
 
         public async Task<string> CreateProduct(ProductCreateDto productDto)
         {
@@ -98,7 +101,12 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <param name="productDto"></param>
+        /// <returns></returns>
         public async Task<string> UpdateProduct(int productId, ProductCreateDto productDto)
         {
             try
@@ -147,7 +155,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 throw;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns></returns>
         public async Task<string> DeleteProduct(int productId)
         {
             try
@@ -159,7 +171,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                     throw new Exception("User not found");
                 }
 
-                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x=>x.Include(s=>s.Seller));
+                var existingProduct = await _productRepo.GetSingleByAsync(x => x.Id == productId, include: x => x.Include(s => s.Seller));
 
                 if (existingProduct == null)
                 {
@@ -167,7 +179,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 }
 
 
-              
+
 
                 var buyer = await _sellerRepo.GetSingleByAsync(b => b.UserId == userId);
 
@@ -198,7 +210,10 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<ProductCreateDto>> GetSellerProducts()
         {
             try
@@ -235,7 +250,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="searchDto"></param>
+        /// <returns></returns>
         public async Task<List<ProductCreateDto>> GetProducts(ProductSearchDto searchDto)
         {
             try
@@ -278,11 +297,11 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         {
             try
             {
-                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview ));
+                var products = await _productRepo.GetAllAsync(include: p => p.Include(r => r.ProductReview));
 
 
                 var productDtos = _mapper.Map<List<ProductCreateDto>>(products);
-             
+
 
                 return productDtos;
             }
@@ -422,52 +441,6 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
             return "Review added successfully";
         }
-
-
-        /* public async Task<Product> CreateProduct(ProductCreateDto productDto)
-         {
-             try
-             {
-                 var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                 if (userId == null)
-                 {
-                     throw new Exception("User not found");
-                 }
-
-                 var product = _mapper.Map<Product>(productDto);
-
-                 Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                 if (seller == null)
-                 {
-                     throw new Exception("Seller not found");
-                 }
-
-                 product.SellerId = seller.Id;
-
-                 // Set the shipping rate and policy for the seller
-                 await SetShippingRateAndPolicyForSeller(seller.Id, productDto.ShippingRate, productDto.ShippingPolicy);
-
-                 await _productRepo.AddAsync(product);
-                 await _unitOfWork.SaveChangesAsync();
-
-                 return product;
-             }
-             catch (Exception ex)
-             {
-                 var sb = new StringBuilder();
-                 sb.AppendLine("An error occurred while getting creating product:");
-                 sb.AppendLine(ex.Message);
-                 sb.AppendLine(ex.StackTrace);
-                 sb.AppendLine("Inner exception:");
-                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-                 _logger.LogError(sb.ToString());
-
-                 throw;
-             }
-         }*/
 
 
     }
