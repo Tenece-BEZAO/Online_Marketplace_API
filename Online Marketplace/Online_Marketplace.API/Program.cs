@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using NLog;
 using Online_Marketplace.API.Extensions;
 using Online_Marketplace.DAL.Entities;
+using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.Filters;
 using System.Reflection;
 
@@ -80,12 +81,19 @@ namespace Online_Marketplace.API
 
             LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
+            var logger = app.Services.GetRequiredService<ILoggerManager>();
+
+            app.ConfigureExceptionHandler(logger);
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            if (app.Environment.IsProduction())
+                app.UseHsts();
 
             app.UseHttpsRedirection();
 

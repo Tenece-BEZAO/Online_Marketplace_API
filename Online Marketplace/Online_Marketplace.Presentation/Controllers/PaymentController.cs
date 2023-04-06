@@ -29,23 +29,18 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "An error occurred while verifying the payment.", typeof(void))]
         public async Task<IActionResult> VerifyPayment([FromQuery] string referenceCode)
         {
-            try
-            {
-                var success = await _paymentService.VerifyPaymentAndUpdateOrderStatus(referenceCode);
+           
+            var success = await _paymentService.VerifyPaymentAndUpdateOrderStatus(referenceCode);
 
-                if (success)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
+            if (success)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                return Ok(new { message = "Payment verified" });
             }
+            else
+            {
+                return BadRequest(new { message = "Payment verification failed" });
+            }
+            
         }
     }
 }

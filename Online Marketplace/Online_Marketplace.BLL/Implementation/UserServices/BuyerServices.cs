@@ -30,44 +30,37 @@ namespace Online_Marketplace.BLL.Implementation.Services
 
         public async Task<string> RegisterBuyer(BuyerForRegistrationDto buyerForRegistration)
         {
-            try
+
+            _logger.LogInfo("Creating the Buyer as a user first, before assigning the buyer role to them and them add them to Buyers table.");
+
+            var user = await _userServices.RegisterUser(new UserForRegistrationDto
             {
-                _logger.LogInfo("Creating the Buyer as a user first, before assigning the buyer role to them and them add them to Buyers table.");
+                FirstName = buyerForRegistration.FirstName,
+                LastName = buyerForRegistration.LastName,
+                Email = buyerForRegistration.Email,
+                Password = buyerForRegistration.Password,
+                UserName = buyerForRegistration.UserName
+            });
 
-                var user = await _userServices.RegisterUser(new UserForRegistrationDto
-                {
-                    FirstName = buyerForRegistration.FirstName,
-                    LastName = buyerForRegistration.LastName,
-                    Email = buyerForRegistration.Email,
-                    Password = buyerForRegistration.Password,
-                    UserName = buyerForRegistration.UserName
-                });
+            await _userManager.AddToRoleAsync(user, "Buyer");
 
-                await _userManager.AddToRoleAsync(user, "Buyer");
-
-                var buyer = new Buyer
-                {
-
-                    FirstName = buyerForRegistration.FirstName,
-                    LastName = buyerForRegistration.LastName,
-                    UserName = buyerForRegistration.UserName,
-                    PhoneNumber = buyerForRegistration.PhoneNumber,
-                    Email = buyerForRegistration.Email,
-                    Address = buyerForRegistration.Address,
-                    UserId = user.Id
-
-                };
-
-                var result = await _buyerRepo.AddAsync(buyer);
-
-                return $"Registration Successful! You can now start buying products!";
-            }
-            catch (Exception ex)
+            var buyer = new Buyer
             {
-                _logger.LogError($"Something went wrong in the {nameof(RegisterBuyer)} service method {ex}");
 
-                throw;
-            }
+                FirstName = buyerForRegistration.FirstName,
+                LastName = buyerForRegistration.LastName,
+                UserName = buyerForRegistration.UserName,
+                PhoneNumber = buyerForRegistration.PhoneNumber,
+                Email = buyerForRegistration.Email,
+                Address = buyerForRegistration.Address,
+                UserId = user.Id
+
+            };
+
+            var result = await _buyerRepo.AddAsync(buyer);
+
+            return $"Registration Successful! You can now start buying products!";
+            
 
         }
     }

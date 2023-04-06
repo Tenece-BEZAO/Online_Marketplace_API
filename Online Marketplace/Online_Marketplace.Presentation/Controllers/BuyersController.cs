@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Implementation.ProfileServices;
 using Online_Marketplace.BLL.Interface.IProfileServices;
 using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
@@ -35,7 +34,6 @@ namespace Online_Marketplace.Presentation.Controllers
         public async Task<IActionResult> RegisterBuyer([FromBody] BuyerForRegistrationDto buyerForRegistration)
         {
             var response = await _buyerServices.RegisterBuyer(buyerForRegistration);
-
             return Ok(response);
         }
 
@@ -48,16 +46,9 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> CreateProfile([FromBody] BuyerProfileDto buyerProfile)
         {
-            try
-            {
-                var response = await _buyerProfileServices.CreateProfile(buyerProfile);
+            var response = await _buyerProfileServices.CreateProfile(buyerProfile);
+            return Ok(response);
 
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
-            }
         }
 
 
@@ -70,15 +61,9 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> UpdateProfile([FromBody] BuyerProfileDto buyerProfile)
         {
-            try
-            {
-                var response = await _buyerProfileServices.UpdateProfile(buyerProfile);
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+            var response = await _buyerProfileServices.UpdateProfile(buyerProfile);
+            return Ok(response);
+
         }
     }
 }

@@ -31,54 +31,41 @@ namespace Online_Marketplace.BLL.Implementation.UserServices
 
         public async Task<ServiceResponse<string>> ValidateUser(UserForAuthenticationDto userForAuth)
         {
-            try
+
+            _logger.LogInfo("Validates user and logs them in");
+
+            _user = await _userManager.FindByNameAsync(userForAuth.UserName);
+
+            var result = _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
+            if (!result)
             {
-                _logger.LogInfo("Validates user and logs them in");
+                _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong username or password.");
 
-                _user = await _userManager.FindByNameAsync(userForAuth.UserName);
-
-                var result = _user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password);
-                if (!result)
-                {
-                    _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong username or password.");
-
-                    return new ServiceResponse<string>
-                    {
-                        Success = false,
-                        Message = "Login failed. Wrong username or password."
-                    };
-                }
                 return new ServiceResponse<string>
                 {
-                    Success = true,
-                    Message = "Login successful."
+                    Success = false,
+                    Message = "Login failed. Wrong username or password."
                 };
             }
-            catch (Exception ex)
+            return new ServiceResponse<string>
             {
-                _logger.LogError($"Something went wrong in the {nameof(ValidateUser)} service method {ex}");
-                throw;
-            }
+                Success = true,
+                Message = "Login successful."
+            };
+
         }
 
         public async Task<string> CreateToken()
         {
-            try
-            {
-                _logger.LogInfo("Creates the JWT token");
 
-                var signingCredentials = GetSigningCredentials();
-                var claims = await GetClaims();
+            _logger.LogInfo("Creates the JWT token");
+
+            var signingCredentials = GetSigningCredentials();
+            var claims = await GetClaims();
 
 
-                var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
-                return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(CreateToken)} service method {ex}");
-                throw;
-            }
+            var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
+            return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
         }
 

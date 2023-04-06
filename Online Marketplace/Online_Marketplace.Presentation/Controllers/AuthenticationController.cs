@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Online_Marketplace.BLL.Implementation;
+﻿using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface.IUserServices;
-using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Shared.DTOs;
 using Online_Marketplace.Shared.Filters;
 using Swashbuckle.AspNetCore.Annotations;
@@ -15,12 +12,11 @@ namespace Online_Marketplace.Presentation.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthService _authentication;
-        private readonly UserManager<User> _userManager;
 
-        public AuthenticationController(IAuthService authentication, UserManager<User> userManager)
+
+        public AuthenticationController(IAuthService authentication)
         {
             _authentication = authentication;
-            _userManager = userManager;
         }
 
        

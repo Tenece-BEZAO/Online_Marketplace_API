@@ -42,15 +42,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "There was an internal server error.")]
         public async Task<IActionResult> CreateProfile([FromBody] AdminProfileDto adminProfile)
         {
-            try
-            {
-                var response = await _adminProfileServices.CreateProfile(adminProfile);
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+
+            var response = await _adminProfileServices.CreateProfile(adminProfile);
+            return Ok(response);
+
         }
 
 
@@ -62,17 +57,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "There was an internal server error.")]
         public async Task<IActionResult> UpdateProfile([FromBody] AdminProfileDto adminProfile)
         {
-            try
-            {
-                var response = await _adminProfileServices.UpdateProfile(adminProfile);
 
-                return Ok(response);
-            }
+            var response = await _adminProfileServices.UpdateProfile(adminProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
 
         }
     }

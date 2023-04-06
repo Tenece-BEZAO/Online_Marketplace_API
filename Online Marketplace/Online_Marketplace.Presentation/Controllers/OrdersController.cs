@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.Logger.Logger;
@@ -9,7 +8,6 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -43,31 +41,30 @@ namespace Online_Marketplace.Presentation.Controllers
                 _logger.LogError($"Something went wrong in the {nameof(BuyerOrderHistory)} controller action: {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
+
+
+                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
+            }
+
+
         }
 
         [Authorize(Roles = "Seller")]
-        [HttpGet("seller-view-orders")]
-        [SwaggerOperation(Summary = "Get order history for the current seller", Description = "Requires seller authorization.")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Order history retrieved successfully.")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
-        public async Task<IActionResult> SellerOrderHistory()
-        {
-            try
-            {
-                var orders = await _orderService.GetSellerOrderHistoryAsync();
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Something went wrong in the {nameof(SellerOrderHistory)} controller action: {ex}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
+            var orders = await _orderService.GetSellerOrderHistoryAsync();
+            return Ok(orders);
+
         }
 
-        [HttpGet("{id}/status")]
+
         [SwaggerOperation(Summary = "Get the status of a specific order", Description = "No authorization required.")]
         [SwaggerResponse(StatusCodes.Status200OK, "Order status retrieved successfully.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
+            }
+
+
+        }
+        [HttpGet("{id}/status")]
+       
         public async Task<IActionResult> GetOrderStatus(int id)
         {
             try
@@ -81,37 +78,30 @@ namespace Online_Marketplace.Presentation.Controllers
                 sb.AppendLine("An error occurred while getting order status:");
                 sb.AppendLine(ex.Message);
                 sb.AppendLine(ex.StackTrace);
-                sb.AppendLine("Inner exception:");
                 sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
                 _logger.LogError(sb.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
-        }
-        [Authorize(Roles = "Buyer")]
-        [HttpPost("checkout/{cartId:int}")]
         [SwaggerOperation(Summary = "Checkout a cart.", Description = "Requires buyer authorization.")]
         [SwaggerResponse(StatusCodes.Status200OK, "Cart checked out successfully.")]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed to checkout cart.")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> Checkout(int cartId, string method )
-        {
-            try
+        }
+            var result = await _orderService.CheckoutAsync(cartId);
+        
+            if (result)
             {
-                var result = await _orderService.CheckoutAsync(cartId, method);
-
-                if (result)
-                {
-                    return Ok("Cart checked out successfully.");
-                }
-                else
-                {
-                    return BadRequest("Error occurred while checking out cart.");
-                }
+                return Ok("Cart checked out successfully");
             }
+            else
+            {
+                return BadRequest("Error occurred while checking out cart");
+            }
+            
             catch (Exception ex)
             {
                 _logger.LogError($"An error occurred while checking out cart with ID {cartId}: {ex}");
-                return StatusCode(StatusCodes.Status500InternalServerError);
+
+                return StatusCode(500, "An error occurred while checking out cart");
             }
         }
         [Authorize(Roles = "Seller")]
@@ -150,15 +140,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "The request was invalid or the order status could not be updated.")]
         public async Task<IActionResult> UpdateOrderStatus(UpdateOrderStatusDto updateOrderStatusDto)
         {
-            try
-            {
-                await _orderService.UpdateOrderStatusAsync(updateOrderStatusDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            
+            await _orderService.UpdateOrderStatusAsync(updateOrderStatusDto);
+            return Ok();
+            
         }
     }
 }

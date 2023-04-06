@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -476,9 +476,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "0d5f5be6-58c6-4c70-93b9-5ead756e1330", "ebcfcd8d-cd8e-487d-8cbe-2d3eb689f90a", "Buyer", "BUYER" },
-                    { "b7385a12-3147-4223-b756-4a3f771c1765", "0881e61a-e551-4db9-8664-62b063f4254c", "Admin", "ADMIN" },
-                    { "f3ec6ff4-c9e1-4a3c-8ec0-775c87cd23bd", "5bc28847-97e3-4b16-855a-a25e613dc4e5", "Seller", "SELLER" }
+                    { "226fbbc2-a9f1-4e58-ac71-b42b66d7ca69", "deb1388e-e9e9-478c-8c1d-b30fd26eb292", "Buyer", "BUYER" },
+                    { "30d6e3b0-6994-4379-a2ee-b63884bf1f36", "14a2f844-83d4-49e2-bf35-a460492ff385", "Seller", "SELLER" },
+                    { "60217e2b-5af1-4705-862f-f14d8d2b9542", "c6e572ce-12d4-459d-bde8-d58f51786304", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(

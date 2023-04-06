@@ -41,17 +41,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(500, "An error occurred while creating the seller's profile.")]
         public async Task<IActionResult> CreateProfile([FromBody] SellerProfileDto sellerProfile)
         {
-            try
-            {
-                var response = await _sellerProfileServices.CreateProfile(sellerProfile);
 
-                return Ok(response);
-            }
+            var response = await _sellerProfileServices.CreateProfile(sellerProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
         }
 
         [HttpPost("updateProfile")]
@@ -61,17 +54,11 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(500, "An error occurred while updating the seller's profile.")]
         public async Task<IActionResult> UpdateProfile([FromBody] SellerProfileDto sellerProfile)
         {
-            try
-            {
-                var response = await _sellerProfileServices.UpdateProfile(sellerProfile);
 
-                return Ok(response);
-            }
+            var response = await _sellerProfileServices.UpdateProfile(sellerProfile);
+            return Ok(response);
 
-            catch (Exception)
-            {
-                return StatusCode(500);
-            }
+
         }
     }
 }
