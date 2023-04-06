@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Online_Marketplace.BLL.Interface.IMarketServices;
 using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
-using Online_Marketplace.Shared.Filters;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -25,15 +26,16 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Seller")]
         [HttpPost("Create-Products")]
-        
+        [SwaggerOperation(Summary = "Create a new product.", Description = "Requires seller authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns the newly created product.", typeof(Product))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> CreateProduct(ProductCreateDto productdto)
         {
             try
             {
                 var product = await _productService.CreateProduct(productdto);
 
-
-                return Ok (product);
+                return Ok(product);
             }
             catch (Exception ex)
             {
@@ -42,10 +44,11 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-        [HttpGet ("Search-Products")]
-        
+        [HttpGet("Search-Products")]
         [AllowAnonymous]
-
+        [SwaggerOperation(Summary = "Search for products.", Description = "Does not require authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of matching products.", typeof(List<ProductCreateDto>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<ActionResult<List<ProductCreateDto>>> SearchProducts([FromQuery] ProductSearchDto searchDto)
         {
             try
@@ -59,31 +62,36 @@ namespace Online_Marketplace.Presentation.Controllers
 
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
 
         [HttpGet("All-Products")]
+        [SwaggerOperation(Summary = "Get all products.", Description = "Does not require authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of all products.", typeof(IEnumerable<ProductCreateDto>))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<ActionResult<IEnumerable<ProductCreateDto>>> GetProducts()
         {
             try
             {
                 var products = await _productService.ViewProducts();
                 return Ok(products);
-            }  
+            }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Something went wrong in the {nameof(GetProducts)} controller action {ex}");
 
-
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
             }
         }
+
         [Authorize(Roles = "Buyer")]
         [HttpPost("add-to-cart")]
-       
+        [SwaggerOperation(Summary = "Add a product to the cart.", Description = "Requires buyer authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The product was successfully added to the cart.")]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Failed to add product to cart.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
             try
@@ -102,14 +110,16 @@ namespace Online_Marketplace.Presentation.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"An error occurred while adding product with ID {productId} to cart: {ex}");
-
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
+
         [Authorize(Roles = "Seller")]
         [HttpPut("Edit")]
-       
+        [SwaggerOperation(Summary = "Update a product.", Description = "Requires seller authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The product was successfully updated.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<ActionResult<Product>> UpdateProduct(int id, ProductCreateDto productDto)
         {
             try
@@ -124,9 +134,12 @@ namespace Online_Marketplace.Presentation.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Internal Server Error");
             }
         }
+
         [Authorize(Roles = "Seller")]
         [HttpDelete("Delete/{id}")]
-        
+        [SwaggerOperation(Summary = "Delete a product.", Description = "Requires seller authorization.")]
+        [SwaggerResponse(StatusCodes.Status204NoContent, "The product was successfully deleted.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
             try
@@ -144,6 +157,9 @@ namespace Online_Marketplace.Presentation.Controllers
 
         [Authorize(Roles = "Seller")]
         [HttpGet("seller/products")]
+        [SwaggerOperation(Summary = "Get seller products.", Description = "Requires seller authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The seller products were successfully retrieved.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<ActionResult<List<ProductCreateDto>>> GetSellerProducts()
         {
             try
@@ -157,9 +173,11 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-      
         [Authorize(Roles = "Buyer")]
         [HttpPost("Add-Reviews")]
+        [SwaggerOperation(Summary = "Add a review for a product.", Description = "Requires buyer authorization.")]
+        [SwaggerResponse(StatusCodes.Status200OK, "The review was successfully added.")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> AddReview(ReviewDto reviewDto)
         {
             try
@@ -175,8 +193,7 @@ namespace Online_Marketplace.Presentation.Controllers
         }
 
 
+
     }
-
-
 
 }

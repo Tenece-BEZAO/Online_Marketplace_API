@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Online_Marketplace.DAL.Entities;
 
@@ -11,9 +12,11 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    partial class MarketPlaceDBContextModelSnapshot : ModelSnapshot
+    [Migration("20230405231319_shipping")]
+    partial class shipping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "72838cc8-b8fc-4c1a-ac5d-3e8a2150beae",
-                            ConcurrencyStamp = "4bbc5db0-570d-4021-b14e-9eb81b61d2a2",
+                            Id = "cc820053-4bdc-4fb3-93a7-b8dc9e5cbc62",
+                            ConcurrencyStamp = "2007c235-19b6-46a5-8c13-bedc6d3f7eb0",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "0d05d956-1d23-4848-a837-9af5584ed26e",
-                            ConcurrencyStamp = "7fe27add-34a5-4907-be83-77bb68ff7a37",
+                            Id = "3007b9f2-cef3-4f84-abf0-afa1b0e0f224",
+                            ConcurrencyStamp = "2628af9f-f266-4397-8b17-56c26e59bede",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "9aebb1df-2372-4f2b-8f91-953b9630088a",
-                            ConcurrencyStamp = "09fe6497-e257-4d53-bcae-344f74e1b769",
+                            Id = "b8acd9c7-8725-4583-a7fc-1dcb0dd8eb17",
+                            ConcurrencyStamp = "dd3ad36e-4345-4ab5-b170-15995a65c7ae",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -658,34 +661,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasIndex("SellerIdentity");
 
                     b.ToTable("SellerProfiles");
-                });
-
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Shipping", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EstimateDeliveryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Policy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ShippingMethod")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Shipping");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -17,7 +17,9 @@ namespace Online_Marketplace.BLL.Interface.IMarketServices
         public Task<byte[]> GenerateReceiptAsync(int orderId);
 
         public Task UpdateOrderStatusAsync(UpdateOrderStatusDto updateOrderStatusDto);
-        public Task<bool> CheckoutAsync(int cartId);
+
+
+        public Task<bool> CheckoutAsync(int cartId, string shippingMethod);
 
     }
 }

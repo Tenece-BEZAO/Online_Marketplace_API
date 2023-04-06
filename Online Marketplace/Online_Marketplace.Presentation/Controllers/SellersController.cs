@@ -4,6 +4,7 @@ using Online_Marketplace.BLL.Interface.IProfileServices;
 using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
 using Online_Marketplace.Shared.Filters;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
@@ -21,10 +22,10 @@ namespace Online_Marketplace.Presentation.Controllers
             _sellerProfileServices = sellerProfileServices;
         }
 
-
-
         [HttpPost("register")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [SwaggerOperation("Registers a new seller.")]
+        [SwaggerResponse(200, "The seller has been successfully registered.", typeof(SellerForRegistrationDto))]
         public async Task<IActionResult> RegisterSeller([FromBody] SellerForRegistrationDto sellerForRegistration)
         {
 
@@ -33,10 +34,11 @@ namespace Online_Marketplace.Presentation.Controllers
             return Ok(response);
         }
 
-
-
         [HttpPost("createProfile")]
         [Authorize(Roles = "Seller")]
+        [SwaggerOperation("Creates a profile for the seller.")]
+        [SwaggerResponse(200, "The seller's profile has been successfully created.", typeof(SellerProfileDto))]
+        [SwaggerResponse(500, "An error occurred while creating the seller's profile.")]
         public async Task<IActionResult> CreateProfile([FromBody] SellerProfileDto sellerProfile)
         {
             try
@@ -52,9 +54,11 @@ namespace Online_Marketplace.Presentation.Controllers
             }
         }
 
-
         [HttpPost("updateProfile")]
         [Authorize(Roles = "Admin")]
+        [SwaggerOperation("Updates a seller's profile.")]
+        [SwaggerResponse(200, "The seller's profile has been successfully updated.", typeof(SellerProfileDto))]
+        [SwaggerResponse(500, "An error occurred while updating the seller's profile.")]
         public async Task<IActionResult> UpdateProfile([FromBody] SellerProfileDto sellerProfile)
         {
             try
@@ -68,7 +72,6 @@ namespace Online_Marketplace.Presentation.Controllers
             {
                 return StatusCode(500);
             }
-
         }
     }
 }

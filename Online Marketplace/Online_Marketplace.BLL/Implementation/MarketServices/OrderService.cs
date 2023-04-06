@@ -11,6 +11,7 @@ using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.DAL.Enums;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
+using Org.BouncyCastle.Asn1.X509;
 using PayStack.Net;
 using System.Security.Claims;
 using System.Text;
@@ -27,6 +28,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         private readonly IRepository<Seller> _sellerRepo;
         private readonly IRepository<Order> _orderRepo;
         private readonly IRepository<Cart> _cartRepo;
+        private readonly IRepository<Shipping > _shippingRepo;
         private readonly IRepository<OrderItem> _orderitemRepo;
         private readonly IRepository<ProductReviews> _productreivewRepo;
         private readonly IUnitOfWork _unitOfWork;
@@ -45,6 +47,8 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _mapper = mapper;
+
+            _shippingRepo = _unitOfWork.GetRepository<Shipping>();
             _cartRepo = _unitOfWork.GetRepository<Cart>();
             _productRepo = _unitOfWork.GetRepository<Product>();
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
@@ -273,7 +277,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 throw;
             }
         }
-        public async Task<bool> CheckoutAsync(int cartId)
+       /* public async Task<bool> CheckoutAsync(int cartId)
         {
             try
             {
@@ -281,6 +285,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                     c => c.Id == cartId,
                     include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
                 );
+
 
                 if (cart == null)
                 {
@@ -328,7 +333,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
                 _logger.LogInfo($"Checked out cart with ID {cart.Id}");
 
-                // Initiate payment for the order
+               
                 var paymentRequest = new PaymentRequestDto
                 {
                     Amount = order.TotalAmount,
@@ -339,7 +344,108 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
                 var transaction = await MakePayment(paymentRequest);
 
-                // Update the order with the transaction details
+                
+                order.TransactionReference = transaction.Data.Reference;
+                order.PaymentGateway = "paystack";
+                order.OrderStatus = OrderStatus.PendingPayment;
+
+                await _orderRepo.UpdateAsync(order);
+
+                _logger.LogInfo($"Payment initiated for order with ID {order.Id}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var sb = new StringBuilder();
+                sb.AppendLine("An error occurred while checking out :");
+                sb.AppendLine(ex.Message);
+                sb.AppendLine(ex.StackTrace);
+                sb.AppendLine("Inner exception:");
+                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
+
+                _logger.LogError(sb.ToString());
+
+                throw;
+            }
+        }*/
+
+
+        public async Task<bool> CheckoutAsync(int cartId, string shippingMethod)
+        {
+            try
+            {
+                var cart = await _cartRepo.GetSingleByAsync(
+                    c => c.Id == cartId,
+                    include: q => q.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
+                );
+
+                if (cart == null)
+                {
+                    throw new Exception("Cart not found");
+                }
+
+                if (cart.CartItems == null || !cart.CartItems.Any())
+                {
+                    throw new Exception("Cart is empty");
+                }
+
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var buyer = await _buyerRepo.GetSingleByAsync(b => b.UserId == userId);
+
+                if (buyer == null)
+                {
+                    throw new Exception("Buyer not found");
+                }
+
+                var orderReference = OrderReferenceGenerator.GenerateOrderReference();
+
+                var order = new Order
+                {
+                    BuyerId = buyer.Id,
+                    Reference = orderReference,
+                    OrderDate = DateTime.UtcNow,
+                    OrderStatus = OrderStatus.Pending,
+                    TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
+                };
+
+                // Calculate shipping cost and estimated delivery date
+                var (shippingCost, estimatedDeliveryDate) = await CalculateShippingCostAsync(shippingMethod.ToString());
+                order.ShippingCost = shippingCost;
+                order.shippingmethod = shippingMethod ;
+                order.EstimateDeliveryDate = estimatedDeliveryDate;
+              
+
+                // Add shipping cost to total amount
+                order.TotalAmount += shippingCost;
+
+                await _orderRepo.AddAsync(order);
+
+                var orderItems = cart.CartItems.Select(ci => new OrderItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    Price = ci.Product.Price,
+                    OrderId = order.Id
+                }).ToList();
+
+                await _orderitemRepo.AddRangeAsync(orderItems);
+
+                await _cartRepo.DeleteAsync(cart);
+
+                _logger.LogInfo($"Checked out cart with ID {cart.Id}");
+
+                var paymentRequest = new PaymentRequestDto
+                {
+                    Amount = order.TotalAmount,
+                    Email = buyer.Email,
+                    Reference = Guid.NewGuid().ToString(),
+                    CallbackUrl = "https://localhost:7258/marketplace/Products/verifypayment"
+                };
+
+                var transaction = await MakePayment(paymentRequest);
+
                 order.TransactionReference = transaction.Data.Reference;
                 order.PaymentGateway = "paystack";
                 order.OrderStatus = OrderStatus.PendingPayment;
@@ -364,6 +470,51 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                 throw;
             }
         }
+
+
+
+
+        public async Task<(decimal shippingCost, DateTime estimatedDeliveryDate)> CalculateShippingCostAsync(string shipmethod)
+
+        {
+            var shipping = Enum.Parse<ShippingMethod>(shipmethod);
+
+
+            var shippingRate = await _shippingRepo.GetSingleByAsync(sr => sr.ShippingMethod == shipping );
+
+            // Calculate the shipping cost based on the shipping rate and other factors
+            decimal shippingCost = 0;
+            DateTime estimatedDeliveryDate = DateTime.Now;
+
+
+
+            if (shippingRate != null)
+            {
+                shippingCost = shippingRate.Rate;
+
+                if (shipping == ShippingMethod.Express)
+                {
+                    shippingCost *= 1.5m; // Increase the shipping cost by 50% for express shipping
+                    estimatedDeliveryDate = DateTime.Now.AddDays(2); // Set estimated delivery date to two days from now
+                }
+                else if (shipping == ShippingMethod.NextDay)
+                {
+                    shippingCost *= 2.0m; // Increase the shipping cost by 100% for next day shipping
+                    estimatedDeliveryDate = DateTime.Now.AddDays(1); // Set estimated delivery date to one day from now
+                }
+                else // Standard shipping
+                {
+                    estimatedDeliveryDate = DateTime.Now.AddDays(5); // Set estimated delivery date to five days from now
+                }
+            }
+
+            return (shippingCost, estimatedDeliveryDate);
+        }
+
+
+
+
+
 
 
         public async Task<TransactionInitializeResponse> MakePayment(PaymentRequestDto paymentRequestDto)
@@ -406,6 +557,34 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
 
 
         }
+       /* public async Task<int> CreateShippingRateAsync(ShippingRateCreateDto shippingRateCreateDto)
+        {
 
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            if (userId == null)
+            {
+                throw new Exception("user not found");
+            }
+
+            var create_shipping = _mapper.Map<Shipping>(shippingRateCreateDto);
+
+            var seller = _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if(seller == null)
+            {
+                throw new Exception("seller not found");
+            }
+
+            create_shipping.SellerId = seller.Id;
+
+
+
+            await _shippingRepo.AddAsync(create_shipping);
+            return create_shipping.Id;
+       
+
+        
+        }*/
     }
 }
