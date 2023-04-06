@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230405131804_ThirdMigration")]
-    partial class ThirdMigration
+    [Migration("20230406144806_wallet")]
+    partial class wallet
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "cab90bdc-e7fb-4aa8-b617-52ef360f377e",
-                            ConcurrencyStamp = "21f68be5-0759-4a8f-a59f-ce329081cc75",
+                            Id = "e59c7a6d-01db-4ad0-8d93-1b29c4cc3322",
+                            ConcurrencyStamp = "e67118f3-0f34-4b9e-8f49-361b26e6be22",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "9910ad3e-f6bd-48b8-9734-5b6f3b177f87",
-                            ConcurrencyStamp = "d48d0146-0fb2-4a52-b821-5a1fa007a391",
+                            Id = "6b01d7c0-38aa-49f4-a0bd-fcc657248b0c",
+                            ConcurrencyStamp = "7edc6a6e-d415-417c-8c8e-6f9561f3e94b",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "a2bd779d-b3f3-41cd-816a-e72aa53090fb",
-                            ConcurrencyStamp = "cd1e0e8b-2a94-4b08-b320-f76afe5f71d4",
+                            Id = "30b5b666-b386-4261-8ce3-ea7f4ac814d3",
+                            ConcurrencyStamp = "d0ea1aa4-f72b-4cae-ae46-13f24a0fef1f",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -481,6 +481,9 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int?>("BuyerProfileId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("EstimateDeliveryDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -496,11 +499,17 @@ namespace Online_Marketplace.DAL.Migrations
                     b.Property<int?>("SellerProfileId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("ShippingCost")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TransactionReference")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("shippingmethod")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -652,6 +661,63 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasIndex("SellerIdentity");
 
                     b.ToTable("SellerProfiles");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Shipping", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EstimateDeliveryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Policy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ShippingMethod")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shipping");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Wallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(38,2)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WalletNo")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SellerId");
+
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -871,6 +937,17 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasOne("Online_Marketplace.DAL.Entities.Models.Seller", "Seller")
                         .WithMany()
                         .HasForeignKey("SellerIdentity")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Seller");
+                });
+
+            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Wallet", b =>
+                {
+                    b.HasOne("Online_Marketplace.DAL.Entities.Models.Seller", "Seller")
+                        .WithMany()
+                        .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

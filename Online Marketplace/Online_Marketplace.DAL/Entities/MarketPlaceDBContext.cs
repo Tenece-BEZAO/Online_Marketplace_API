@@ -90,6 +90,7 @@ namespace Online_Marketplace.DAL.Entities
         public DbSet<ProductReviews> ProductReviews { get; set; }
 
         public DbSet<Shipping> Shipping { get; set; }
+        public DbSet<Wallet > Wallets { get; set; }
 
     }
 }

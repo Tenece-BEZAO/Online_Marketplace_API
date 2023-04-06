@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class wallet : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,6 +52,23 @@ namespace Online_Marketplace.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Shipping",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    EstimateDeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShippingMethod = table.Column<int>(type: "int", nullable: false),
+                    Policy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shipping", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,6 +333,28 @@ namespace Online_Marketplace.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Wallets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WalletNo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    SellerId = table.Column<int>(type: "int", nullable: false),
+                    Balance = table.Column<decimal>(type: "decimal(38,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Wallets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Wallets_Sellers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "Sellers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Order",
                 columns: table => new
                 {
@@ -328,6 +367,9 @@ namespace Online_Marketplace.DAL.Migrations
                     PaymentGateway = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Reference = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TransactionReference = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    shippingmethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShippingCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    EstimateDeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BuyerProfileId = table.Column<int>(type: "int", nullable: true),
                     SellerProfileId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -443,12 +485,12 @@ namespace Online_Marketplace.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    ProductIdentity = table.Column<int>(type: "int", nullable: false),
                     BuyerId = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProductId1 = table.Column<int>(type: "int", nullable: true)
+                    ProductId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -465,8 +507,8 @@ namespace Online_Marketplace.DAL.Migrations
                         principalTable: "Products",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ProductReviews_Products_ProductId1",
-                        column: x => x.ProductId1,
+                        name: "FK_ProductReviews_Products_ProductIdentity",
+                        column: x => x.ProductIdentity,
                         principalTable: "Products",
                         principalColumn: "Id");
                 });
@@ -476,9 +518,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "226fbbc2-a9f1-4e58-ac71-b42b66d7ca69", "deb1388e-e9e9-478c-8c1d-b30fd26eb292", "Buyer", "BUYER" },
-                    { "30d6e3b0-6994-4379-a2ee-b63884bf1f36", "14a2f844-83d4-49e2-bf35-a460492ff385", "Seller", "SELLER" },
-                    { "60217e2b-5af1-4705-862f-f14d8d2b9542", "c6e572ce-12d4-459d-bde8-d58f51786304", "Admin", "ADMIN" }
+                    { "30b5b666-b386-4261-8ce3-ea7f4ac814d3", "d0ea1aa4-f72b-4cae-ae46-13f24a0fef1f", "Buyer", "BUYER" },
+                    { "6b01d7c0-38aa-49f4-a0bd-fcc657248b0c", "7edc6a6e-d415-417c-8c8e-6f9561f3e94b", "Seller", "SELLER" },
+                    { "e59c7a6d-01db-4ad0-8d93-1b29c4cc3322", "e67118f3-0f34-4b9e-8f49-361b26e6be22", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -591,9 +633,9 @@ namespace Online_Marketplace.DAL.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductReviews_ProductId1",
+                name: "IX_ProductReviews_ProductIdentity",
                 table: "ProductReviews",
-                column: "ProductId1");
+                column: "ProductIdentity");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SellerId",
@@ -614,6 +656,11 @@ namespace Online_Marketplace.DAL.Migrations
                 name: "IX_Sellers_UserId",
                 table: "Sellers",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Wallets_SellerId",
+                table: "Wallets",
+                column: "SellerId");
         }
 
         /// <inheritdoc />
@@ -645,6 +692,12 @@ namespace Online_Marketplace.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductReviews");
+
+            migrationBuilder.DropTable(
+                name: "Shipping");
+
+            migrationBuilder.DropTable(
+                name: "Wallets");
 
             migrationBuilder.DropTable(
                 name: "Admins");

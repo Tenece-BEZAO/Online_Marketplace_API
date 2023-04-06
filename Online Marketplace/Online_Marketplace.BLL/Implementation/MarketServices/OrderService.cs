@@ -371,7 +371,7 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         }*/
 
 
-        public async Task<bool> CheckoutAsync(int cartId, string shippingMethod)
+        public async Task<bool> CheckoutAsync(int cartId, ShippingMethod shippingMethod)
         {
             try
             {
@@ -410,13 +410,12 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
                     TotalAmount = cart.CartItems.Sum(ci => ci.Product.Price * ci.Quantity)
                 };
 
-                // Calculate shipping cost and estimated delivery date
-                var (shippingCost, estimatedDeliveryDate) = await CalculateShippingCostAsync(shippingMethod.ToString());
+               
+                var (shippingCost, estimatedDeliveryDate) = await CalculateShippingCostAsync(shippingMethod);
                 order.ShippingCost = shippingCost;
-                order.shippingmethod = shippingMethod ;
+                order.shippingmethod = shippingMethod.ToString() ;
                 order.EstimateDeliveryDate = estimatedDeliveryDate;
               
-
                 // Add shipping cost to total amount
                 order.TotalAmount += shippingCost;
 
@@ -472,47 +471,41 @@ namespace Online_Marketplace.BLL.Implementation.MarketServices
         }
 
 
-
-
-        public async Task<(decimal shippingCost, DateTime estimatedDeliveryDate)> CalculateShippingCostAsync(string shipmethod)
+        public async Task<(decimal shippingCost, DateTime estimatedDeliveryDate)> CalculateShippingCostAsync(ShippingMethod shippingMethod)
 
         {
-            var shipping = Enum.Parse<ShippingMethod>(shipmethod);
+            
 
 
-            var shippingRate = await _shippingRepo.GetSingleByAsync(sr => sr.ShippingMethod == shipping );
+            var shippingRate = await _shippingRepo.GetSingleByAsync(sr => sr.ShippingMethod == shippingMethod);
 
-            // Calculate the shipping cost based on the shipping rate and other factors
+            
             decimal shippingCost = 0;
             DateTime estimatedDeliveryDate = DateTime.Now;
-
 
 
             if (shippingRate != null)
             {
                 shippingCost = shippingRate.Rate;
 
-                if (shipping == ShippingMethod.Express)
+                if (shippingMethod == ShippingMethod.Express)
                 {
-                    shippingCost *= 1.5m; // Increase the shipping cost by 50% for express shipping
-                    estimatedDeliveryDate = DateTime.Now.AddDays(2); // Set estimated delivery date to two days from now
+                    shippingCost *= 1.5m; 
+                    estimatedDeliveryDate = DateTime.Now.AddDays(2); 
                 }
-                else if (shipping == ShippingMethod.NextDay)
+                else if (shippingMethod == ShippingMethod.NextDay)
                 {
-                    shippingCost *= 2.0m; // Increase the shipping cost by 100% for next day shipping
-                    estimatedDeliveryDate = DateTime.Now.AddDays(1); // Set estimated delivery date to one day from now
+                    shippingCost *= 2.0m; 
+                    estimatedDeliveryDate = DateTime.Now.AddDays(1); 
                 }
-                else // Standard shipping
+                else 
                 {
-                    estimatedDeliveryDate = DateTime.Now.AddDays(5); // Set estimated delivery date to five days from now
+                    estimatedDeliveryDate = DateTime.Now.AddDays(5); 
                 }
             }
 
             return (shippingCost, estimatedDeliveryDate);
         }
-
-
-
 
 
 

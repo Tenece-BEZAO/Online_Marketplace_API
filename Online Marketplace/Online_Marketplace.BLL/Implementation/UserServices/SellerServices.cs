@@ -1,6 +1,8 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Identity;
+using Online_Marketplace.BLL.Extension;
 using Online_Marketplace.BLL.Interface.IServices;
+using Online_Marketplace.DAL.Entities;
 using Online_Marketplace.DAL.Entities.Models;
 using Online_Marketplace.Logger.Logger;
 using Online_Marketplace.Shared.DTOs;
@@ -16,6 +18,8 @@ namespace Online_Marketplace.BLL.Implementation.Services
         private readonly IUserServices _userServices;
         private readonly UserManager<User> _userManager;
 
+        private readonly IRepository<Wallet> _walletRepo;
+
 
         public SellerServices(ILoggerManager logger, IUnitOfWork unitOfWork, UserManager<User> userManager, IUserServices userServices)
         {
@@ -24,7 +28,7 @@ namespace Online_Marketplace.BLL.Implementation.Services
             _userManager = userManager;
             _userServices = userServices;
             _sellerRepo = _unitOfWork.GetRepository<Seller>();
-
+            _walletRepo = _unitOfWork.GetRepository<Wallet>();
         }
 
 
@@ -56,11 +60,24 @@ namespace Online_Marketplace.BLL.Implementation.Services
 
             };
 
-            var result = await _sellerRepo.AddAsync(seller);
+            await _sellerRepo.AddAsync(seller);
+            await CreateCustomerAccount(seller);
 
             return $"Registration Successful! You can now start listing your product!";
             
 
+        }
+
+        private async Task CreateCustomerAccount(Seller seller )
+        {
+             Wallet wallet = new()
+            {
+                WalletNo = WalletIdGenerator.GenerateWalletId(),
+                Balance = 0,
+                IsActive = true,
+                SellerId = seller.Id,   
+            };
+            await _walletRepo.AddAsync(wallet);
         }
     }
 }

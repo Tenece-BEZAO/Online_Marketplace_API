@@ -1,4 +1,5 @@
-﻿using Online_Marketplace.Shared.DTOs;
+﻿using Online_Marketplace.DAL.Enums;
+using Online_Marketplace.Shared.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Online_Marketplace.BLL.Interface.IMarketServices
         public Task UpdateOrderStatusAsync(UpdateOrderStatusDto updateOrderStatusDto);
 
 
-        public Task<bool> CheckoutAsync(int cartId, string shippingMethod);
+        public Task<bool> CheckoutAsync(int cartId, ShippingMethod shippingMethod);
 
     }
 }
