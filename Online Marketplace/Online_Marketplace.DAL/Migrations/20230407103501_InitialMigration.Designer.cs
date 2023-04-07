@@ -12,8 +12,8 @@ using Online_Marketplace.DAL.Entities;
 namespace Online_Marketplace.DAL.Migrations
 {
     [DbContext(typeof(MarketPlaceDBContext))]
-    [Migration("20230406195154_wall")]
-    partial class wall
+    [Migration("20230407103501_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,22 +54,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1e98ba27-a0d4-4d5e-8da9-e9be3b7678f2",
-                            ConcurrencyStamp = "304c93fa-c4a2-4f4b-8912-91f1f461e5ba",
+                            Id = "f8f86ffc-1fb9-4fc4-8bb5-c75b3020e0f6",
+                            ConcurrencyStamp = "b7229619-e88e-4712-8d90-f51edae09015",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a032e714-dd99-46b1-9749-640a86433b8e",
-                            ConcurrencyStamp = "f8512c10-bddc-4990-97ef-494efe6f1109",
+                            Id = "f3a41584-6091-4cd8-8b90-2c73b95ed8b3",
+                            ConcurrencyStamp = "d5f5f453-c5ef-42b1-a344-a66901152bf4",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "3f2e37d7-5b00-41b9-83aa-2a55f2475b65",
-                            ConcurrencyStamp = "b6db8fe7-e6f1-4223-9b72-9b2fe594c3d9",
+                            Id = "d3cf8759-3919-45d6-b988-3abc813ae2bf",
+                            ConcurrencyStamp = "9070400e-cc4e-4a08-9cfc-d98e72dca65d",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -661,34 +661,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasIndex("SellerIdentity");
 
                     b.ToTable("SellerProfiles");
-                });
-
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Shipping", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EstimateDeliveryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Policy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ShippingMethod")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Shipping");
                 });
 
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.Wallet", b =>

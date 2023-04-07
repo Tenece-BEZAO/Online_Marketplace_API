@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Online_Marketplace.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class wallet : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,23 +52,6 @@ namespace Online_Marketplace.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Shipping",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    EstimateDeliveryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ShippingMethod = table.Column<int>(type: "int", nullable: false),
-                    Policy = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Shipping", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -518,9 +501,9 @@ namespace Online_Marketplace.DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "30b5b666-b386-4261-8ce3-ea7f4ac814d3", "d0ea1aa4-f72b-4cae-ae46-13f24a0fef1f", "Buyer", "BUYER" },
-                    { "6b01d7c0-38aa-49f4-a0bd-fcc657248b0c", "7edc6a6e-d415-417c-8c8e-6f9561f3e94b", "Seller", "SELLER" },
-                    { "e59c7a6d-01db-4ad0-8d93-1b29c4cc3322", "e67118f3-0f34-4b9e-8f49-361b26e6be22", "Admin", "ADMIN" }
+                    { "d3cf8759-3919-45d6-b988-3abc813ae2bf", "9070400e-cc4e-4a08-9cfc-d98e72dca65d", "Buyer", "BUYER" },
+                    { "f3a41584-6091-4cd8-8b90-2c73b95ed8b3", "d5f5f453-c5ef-42b1-a344-a66901152bf4", "Seller", "SELLER" },
+                    { "f8f86ffc-1fb9-4fc4-8bb5-c75b3020e0f6", "b7229619-e88e-4712-8d90-f51edae09015", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -692,9 +675,6 @@ namespace Online_Marketplace.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductReviews");
-
-            migrationBuilder.DropTable(
-                name: "Shipping");
 
             migrationBuilder.DropTable(
                 name: "Wallets");

@@ -64,8 +64,9 @@ namespace Online_Marketplace.DAL.Entities
             {
                 entity.Property(p => p.TotalAmount)
                       .HasPrecision(18, 2);
+                entity.Property(p => p.ShippingCost)
+                      .HasPrecision(18, 2);
             });
-
 
 
             base.OnModelCreating(modelBuilder);
