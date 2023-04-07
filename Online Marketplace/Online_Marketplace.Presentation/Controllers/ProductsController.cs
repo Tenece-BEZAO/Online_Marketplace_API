@@ -16,12 +16,10 @@ namespace Online_Marketplace.Presentation.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
-        private readonly ILoggerManager _logger;
 
-        public ProductsController(IProductService productService, ILoggerManager logger)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
-            _logger = logger;
         }
 
 
@@ -100,6 +98,7 @@ namespace Online_Marketplace.Presentation.Controllers
 
         }
 
+
         [Authorize(Roles = "Seller")]
         [HttpDelete("Delete/{id}")]
         [SwaggerOperation(Summary = "Delete a product.", Description = "Requires seller authorization.")]
@@ -123,6 +122,7 @@ namespace Online_Marketplace.Presentation.Controllers
             var products = await _productService.GetSellerProducts();
             return Ok(products);
         }
+
 
         [Authorize(Roles = "Buyer")]
         [HttpPost("Add-Reviews")]

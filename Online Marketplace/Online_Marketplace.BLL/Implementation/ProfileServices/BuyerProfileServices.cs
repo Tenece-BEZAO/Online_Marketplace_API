@@ -32,41 +32,35 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<BuyerProfile> CreateProfile(BuyerProfileDto buyerProfile)
         {
-            try
+
+            _logger.LogInfo("Creating Buyer user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                _logger.LogInfo("Creating Buyer user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only buyers are authorized to create buyer profile.");
-                }
-
-                var profile = new BuyerProfile
-                {
-                    Address = buyerProfile.Address
-                };
-
-                Buyer buyer = await _buyerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (buyer == null)
-                {
-                    throw new Exception("Buyer not found");
-                }
-
-                profile.BuyerIdentity = buyer.Id;
-
-                BuyerProfile addedProfile = await _buyerProfileRepo.AddAsync(profile);
-
-                return addedProfile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only buyers are authorized to create buyer profile.");
             }
-            catch (Exception ex)
+
+            var profile = new BuyerProfile
             {
-                _logger.LogError($"Something went wrong in the {nameof(CreateProfile)} service method {ex}");
-                throw;
+                Address = buyerProfile.Address
+            };
+
+            Buyer buyer = await _buyerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (buyer == null)
+            {
+                throw new Exception("Buyer not found");
             }
+
+            profile.BuyerIdentity = buyer.Id;
+
+            BuyerProfile addedProfile = await _buyerProfileRepo.AddAsync(profile);
+
+            return addedProfile;
+            
         }
 
 
@@ -82,43 +76,37 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<BuyerProfile> UpdateProfile(BuyerProfileDto buyerProfile)
         {
-            try
+            
+            _logger.LogInfo("Updating Buyer user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                _logger.LogInfo("Updating Buyer user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only buyers are authorized to update buyer profile.");
-                }
-
-                Buyer buyer = await _buyerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (buyer == null)
-                {
-                    throw new Exception("Buyer not found");
-                }
-
-                BuyerProfile profile = await _buyerProfileRepo.GetSingleByAsync(p => p.BuyerIdentity == buyer.Id);
-
-                if (profile == null)
-                {
-                    throw new Exception("Buyer profile not found");
-                }
-
-                profile.Address = buyerProfile.Address;
-
-                await _buyerProfileRepo.UpdateAsync(profile);
-
-                return profile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only buyers are authorized to update buyer profile.");
             }
-            catch (Exception ex)
+
+            Buyer buyer = await _buyerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (buyer == null)
             {
-                _logger.LogError($"Something went wrong in the {nameof(UpdateProfile)} service method {ex}");
-                throw;
+                throw new Exception("Buyer not found");
             }
+
+            BuyerProfile profile = await _buyerProfileRepo.GetSingleByAsync(p => p.BuyerIdentity == buyer.Id);
+
+            if (profile == null)
+            {
+                throw new Exception("Buyer profile not found");
+            }
+
+            profile.Address = buyerProfile.Address;
+
+            await _buyerProfileRepo.UpdateAsync(profile);
+
+            return profile;
+            
         }
     }
 }

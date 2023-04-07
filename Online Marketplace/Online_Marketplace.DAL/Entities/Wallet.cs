@@ -19,7 +19,7 @@ namespace Online_Marketplace.DAL.Entities
         [Column(TypeName = "decimal(38,2)")]
         public decimal Balance { get; set; }
         public bool IsActive { get; set; }
-       
+
         public virtual Seller Seller { get; set; }
     }
 }

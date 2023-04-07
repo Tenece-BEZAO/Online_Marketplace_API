@@ -31,43 +31,37 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<SellerProfile> CreateProfile(SellerProfileDto sellerProfile)
         {
-            try
+            
+            _logger.LogInfo("Creating Seller user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                _logger.LogInfo("Creating Seller user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only sellers are authorized to create buyer profile.");
-                }
-
-                var profile = new SellerProfile
-                {
-                    BusinessName = sellerProfile.BusinessName,
-                    BusinessDescription = sellerProfile.BusinessDescription,
-                    BusinessCatagories = sellerProfile.BusinessCategories
-                };
-
-                Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (seller == null)
-                {
-                    throw new Exception("Seller not found");
-                }
-
-                profile.SellerIdentity = seller.Id;
-
-                SellerProfile addedProfile = await _sellerProfileRepo.AddAsync(profile);
-
-                return addedProfile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only sellers are authorized to create buyer profile.");
             }
-            catch (Exception ex)
+
+            var profile = new SellerProfile
             {
-                _logger.LogError($"Something went wrong in the {nameof(CreateProfile)} service method {ex}");
-                throw;
+                BusinessName = sellerProfile.BusinessName,
+                BusinessDescription = sellerProfile.BusinessDescription,
+                BusinessCatagories = sellerProfile.BusinessCategories
+            };
+
+            Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (seller == null)
+            {
+                throw new Exception("Seller not found");
             }
+
+            profile.SellerIdentity = seller.Id;
+
+            SellerProfile addedProfile = await _sellerProfileRepo.AddAsync(profile);
+
+            return addedProfile;
+            
         }
 
         public void DeleteProfile()
@@ -82,46 +76,40 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<SellerProfile> UpdateProfile(SellerProfileDto sellerProfile)
         {
-            try
+           
+            _logger.LogInfo("Updating Seller user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                _logger.LogInfo("Updating Seller user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only sellers are authorized to update seller profile.");
-                }
-
-                Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (seller == null)
-                {
-                    throw new Exception("Seller not found");
-                }
-
-                SellerProfile profile = await _sellerProfileRepo.GetSingleByAsync(p => p.SellerIdentity == seller.Id);
-
-                if (profile == null)
-                {
-                    throw new Exception("Seller profile not found");
-                }
-
-                profile.BusinessName = sellerProfile.BusinessName;
-                profile.BusinessDescription = sellerProfile.BusinessDescription;
-                profile.BusinessCatagories = sellerProfile.BusinessCategories;
-
-
-                await _sellerProfileRepo.UpdateAsync(profile);
-
-                return profile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only sellers are authorized to update seller profile.");
             }
-            catch (Exception ex)
+
+            Seller seller = await _sellerRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (seller == null)
             {
-                _logger.LogError($"Something went wrong in the {nameof(UpdateProfile)} service method {ex}");
-                throw;
+                throw new Exception("Seller not found");
             }
+
+            SellerProfile profile = await _sellerProfileRepo.GetSingleByAsync(p => p.SellerIdentity == seller.Id);
+
+            if (profile == null)
+            {
+                throw new Exception("Seller profile not found");
+            }
+
+            profile.BusinessName = sellerProfile.BusinessName;
+            profile.BusinessDescription = sellerProfile.BusinessDescription;
+            profile.BusinessCatagories = sellerProfile.BusinessCategories;
+
+
+            await _sellerProfileRepo.UpdateAsync(profile);
+
+            return profile;
+            
         }
     }
 }

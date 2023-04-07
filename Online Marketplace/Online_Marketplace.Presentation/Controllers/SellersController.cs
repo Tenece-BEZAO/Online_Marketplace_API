@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Online_Marketplace.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/sellers")]
+    [Route("/marketplace/sellers")]
     public class SellersController : ControllerBase
     {
 

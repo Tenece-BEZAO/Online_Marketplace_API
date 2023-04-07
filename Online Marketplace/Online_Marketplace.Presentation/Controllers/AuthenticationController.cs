@@ -8,7 +8,7 @@ using System.Net;
 namespace Online_Marketplace.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/authentication")]
+    [Route("/marketplace/authentication")]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthService _authentication;

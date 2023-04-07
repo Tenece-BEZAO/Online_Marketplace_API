@@ -17,7 +17,6 @@ namespace Online_Marketplace.DAL.Entities
         public virtual Buyer Buyer { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
 
-        /*public ShippingMethod ? ShippingMethod { get; set; }*/
         public string ? shippingmethod { get; set; }  
 
         public decimal ShippingCost { get; set; }

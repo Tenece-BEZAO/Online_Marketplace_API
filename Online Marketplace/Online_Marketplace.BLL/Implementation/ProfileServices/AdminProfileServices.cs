@@ -32,47 +32,38 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<AdminProfile> CreateProfile(AdminProfileDto adminProfile)
         {
-            try
+            
+            _logger.LogInfo("Creating Admin user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId ==null)
             {
-                _logger.LogInfo("Creating Admin user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId ==null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only admins are authorized to create admin profile.");
-                }
-
-                var profile = new AdminProfile
-                {
-
-                    Address = adminProfile.Address
-
-                };
-
-                Admin admin = await _adminRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (admin == null)
-                {
-                    throw new Exception("Admin not found");
-                }
-
-                profile.AdminIdentity = admin.Id;
-
-
-                AdminProfile AddProfile = await _adminProfileRepo.AddAsync(profile);
-
-                return AddProfile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only admins are authorized to create admin profile.");
             }
 
-            catch (Exception ex)
+            var profile = new AdminProfile
             {
 
-                _logger.LogError($"Something went wrong in the {nameof(CreateProfile)} service method {ex}");
+                Address = adminProfile.Address
 
-                throw;
+            };
+
+            Admin admin = await _adminRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (admin == null)
+            {
+                throw new Exception("Admin not found");
             }
+
+            profile.AdminIdentity = admin.Id;
+
+
+            AdminProfile AddProfile = await _adminProfileRepo.AddAsync(profile);
+
+            return AddProfile;
+            
         }
 
         public void DeleteProfile()
@@ -87,43 +78,37 @@ namespace Online_Marketplace.BLL.Implementation.ProfileServices
 
         public async Task<AdminProfile> UpdateProfile(AdminProfileDto adminProfile)
         {
-            try
+            
+            _logger.LogInfo("Updating Admin user profile");
+
+            var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
             {
-                _logger.LogInfo("Updating Admin user profile");
-
-                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (userId == null)
-                {
-                    _logger.LogError("User is not authorised");
-                    throw new Exception("Only admins are authorized to update admin profile.");
-                }
-
-                Admin admin = await _adminRepo.GetSingleByAsync(s => s.UserId == userId);
-
-                if (admin == null)
-                {
-                    throw new Exception("Admin not found");
-                }
-
-                AdminProfile profile = await _adminProfileRepo.GetSingleByAsync(p => p.AdminIdentity == admin.Id);
-
-                if (profile == null)
-                {
-                    throw new Exception("Admin profile not found");
-                }
-
-                profile.Address = adminProfile.Address;
-
-                await _adminProfileRepo.UpdateAsync(profile);
-
-                return profile;
+                _logger.LogError("User is not authorised");
+                throw new Exception("Only admins are authorized to update admin profile.");
             }
-            catch (Exception ex)
+
+            Admin admin = await _adminRepo.GetSingleByAsync(s => s.UserId == userId);
+
+            if (admin == null)
             {
-                _logger.LogError($"Something went wrong in the {nameof(UpdateProfile)} service method {ex}");
-                throw;
+                throw new Exception("Admin not found");
             }
+
+            AdminProfile profile = await _adminProfileRepo.GetSingleByAsync(p => p.AdminIdentity == admin.Id);
+
+            if (profile == null)
+            {
+                throw new Exception("Admin profile not found");
+            }
+
+            profile.Address = adminProfile.Address;
+
+            await _adminProfileRepo.UpdateAsync(profile);
+
+            return profile;
+            
         }
 
     }

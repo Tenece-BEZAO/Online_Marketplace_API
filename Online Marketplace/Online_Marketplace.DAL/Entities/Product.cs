@@ -1,10 +1,6 @@
 ﻿using Online_Marketplace.DAL.Entities.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using Online_Marketplace.DAL.Entities.Models;
-using System.Collections.Generic;
-using Online_Marketplace.DAL.Entities;
 
 namespace Online_Marketplace.DAL.Entities
 {
@@ -35,6 +31,6 @@ namespace Online_Marketplace.DAL.Entities
 
         public Seller Seller { get; set; }
 
-        public virtual ICollection<ProductReviews>  ProductReview {get;set;}
+        public virtual ICollection<ProductReviews> ProductReview { get; set; }
     }
 }
