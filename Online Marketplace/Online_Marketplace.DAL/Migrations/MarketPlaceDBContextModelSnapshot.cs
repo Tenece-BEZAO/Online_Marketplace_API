@@ -51,22 +51,22 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1e98ba27-a0d4-4d5e-8da9-e9be3b7678f2",
-                            ConcurrencyStamp = "304c93fa-c4a2-4f4b-8912-91f1f461e5ba",
+                            Id = "b7ee188b-f314-4ad8-970d-e42e1cb4d4b0",
+                            ConcurrencyStamp = "2842cc72-8823-4346-b708-4d8ba3b89d51",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "a032e714-dd99-46b1-9749-640a86433b8e",
-                            ConcurrencyStamp = "f8512c10-bddc-4990-97ef-494efe6f1109",
+                            Id = "3fe3ce21-aa56-4d57-baec-7eb7272dad75",
+                            ConcurrencyStamp = "02e11705-3c50-4a13-97a7-2cc73a1f4a78",
                             Name = "Seller",
                             NormalizedName = "SELLER"
                         },
                         new
                         {
-                            Id = "3f2e37d7-5b00-41b9-83aa-2a55f2475b65",
-                            ConcurrencyStamp = "b6db8fe7-e6f1-4223-9b72-9b2fe594c3d9",
+                            Id = "8cdbf377-4d36-4325-a5e2-22a7c95b9a4c",
+                            ConcurrencyStamp = "892c99ec-a2a1-444e-8634-8ab5e48395c5",
                             Name = "Buyer",
                             NormalizedName = "BUYER"
                         });
@@ -497,6 +497,7 @@ namespace Online_Marketplace.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("ShippingCost")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TotalAmount")
@@ -658,34 +659,6 @@ namespace Online_Marketplace.DAL.Migrations
                     b.HasIndex("SellerIdentity");
 
                     b.ToTable("SellerProfiles");
-                });
-
-            modelBuilder.Entity("Online_Marketplace.DAL.Entities.Shipping", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("EstimateDeliveryDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Policy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ShippingMethod")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Shipping");
                 });
 
             modelBuilder.Entity("Online_Marketplace.DAL.Entities.Wallet", b =>
