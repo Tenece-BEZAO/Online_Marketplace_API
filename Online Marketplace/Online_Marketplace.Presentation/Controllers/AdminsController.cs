@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace Online_Marketplace.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/admins")]
+    [Route("/marketplace/admins")]
     public class AdminsController : ControllerBase
     {
 
@@ -33,6 +33,7 @@ namespace Online_Marketplace.Presentation.Controllers
             var response = await _adminServices.RegisterAdmin(adminForRegistration);
             return Ok(response);
         }
+
 
         [HttpPost("createProfile")]
         [Authorize(Roles = "Admin")]

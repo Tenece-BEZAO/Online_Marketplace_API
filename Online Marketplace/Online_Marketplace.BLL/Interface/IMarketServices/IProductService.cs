@@ -1,5 +1,4 @@
-﻿using Online_Marketplace.DAL.Entities;
-using Online_Marketplace.Shared.DTOs;
+﻿using Online_Marketplace.Shared.DTOs;
 
 namespace Online_Marketplace.BLL.Interface.IMarketServices
 {
@@ -15,9 +14,9 @@ namespace Online_Marketplace.BLL.Interface.IMarketServices
         public Task<string> DeleteProduct(int productId);
 
         public Task<List<ProductCreateDto>> GetSellerProducts();
-       
+
 
         public Task<string> AddReview(ReviewDto reviewDto);
-        
+
     }
 }

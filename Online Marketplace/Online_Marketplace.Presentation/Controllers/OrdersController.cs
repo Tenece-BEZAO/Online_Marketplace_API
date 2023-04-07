@@ -55,22 +55,10 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal server error.")]
         public async Task<IActionResult> GetOrderStatus(int id)
         {
-            try
-            {
-                var orderStatuses = await _orderService.GetOrderStatusAsync(id);
-                return Ok(orderStatuses);
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("An error occurred while getting order status:");
-                sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace);
-                sb.AppendLine("Inner exception:");
-                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-                _logger.LogError(sb.ToString());
-                return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
-            }
+            
+            var orderStatuses = await _orderService.GetOrderStatusAsync(id);
+            return Ok(orderStatuses);
+            
         }
         [Authorize(Roles = "Buyer")]
         [HttpPost("checkout/{cartId:int}")]
@@ -99,26 +87,11 @@ namespace Online_Marketplace.Presentation.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "An error occurred while generating the receipt.")]
         public async Task<FileResult> GenerateReceiptAsync(int orderId)
         {
-            try
-            {
-                var receipt = await _orderService.GenerateReceiptAsync(orderId);
+            var receipt = await _orderService.GenerateReceiptAsync(orderId);
 
-                // Return the receipt as a file
-                return File(receipt, "application/pdf", $"receipt_{orderId}.pdf");
-            }
-            catch (Exception ex)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine("An error occurred while generating the receipt:");
-                sb.AppendLine(ex.Message);
-                sb.AppendLine(ex.StackTrace);
-                sb.AppendLine("Inner exception:");
-                sb.AppendLine(ex.InnerException?.Message ?? "No inner exception");
-
-                _logger.LogError(sb.ToString());
-
-                throw;
-            }
+            // Return the receipt as a file
+            return File(receipt, "application/pdf", $"receipt_{orderId}.pdf");
+            
         }
 
 

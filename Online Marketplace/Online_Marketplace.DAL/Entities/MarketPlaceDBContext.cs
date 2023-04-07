@@ -88,8 +88,6 @@ namespace Online_Marketplace.DAL.Entities
         public DbSet<Order> Order { get; set; }
         public DbSet<OrderItem> OrderItem { get; set; }
         public DbSet<ProductReviews> ProductReviews { get; set; }
-
-        public DbSet<Shipping> Shipping { get; set; }
         public DbSet<Wallet > Wallets { get; set; }
 
     }

@@ -6,12 +6,11 @@ using Online_Marketplace.BLL.Interface.IServices;
 using Online_Marketplace.Shared.DTOs;
 using Online_Marketplace.Shared.Filters;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Data;
 
 namespace Online_Marketplace.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/buyers")]
+    [Route("/marketplace/buyers")]
     public class BuyersController : ControllerBase
     {
 
