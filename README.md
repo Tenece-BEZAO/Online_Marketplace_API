@@ -58,7 +58,7 @@ setx SECRET "OnlineMarketPlaceSecretKey" /M
 - This is going to create a system environment variable with the name 
 SECRET and the value OnlineMarketPlaceSecretKey. By using /M we specify that 
 we want a system variable and not local.
-4. **Run the API**
+4. **Go back to visual studio and run the program**
 ___
 ## TECHNOLOGY STACK 👓:
 - Programming language: C#
